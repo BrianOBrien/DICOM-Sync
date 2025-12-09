@@ -1,41 +1,123 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using DicomSync.Controllers;
-using DicomSync.Models;
 
 namespace DicomSync;
 
 public partial class MainWindow : Window
 {
-    private readonly AetController _controller = new AetController();
-
     public MainWindow()
     {
         InitializeComponent();
     }
 
-    private async void OnEchoClick(object? sender, RoutedEventArgs e)
+    // ----------------- Global AE -----------------
+
+    private async void OnGlobalEchoClick(object? sender, RoutedEventArgs e)
     {
-        var endpoint = new AetEndpoint
-        {
-            Title = AetTitleBox.Text?.Trim() ?? string.Empty,
-            Hostname = HostnameBox.Text?.Trim() ?? string.Empty,
-            Port = ParsePort(PortBox.Text)
-        };
+        StatusText.Text = "Pinging global AE...";
 
-        StatusText.Text = "Echoing...";
-        var ok = await _controller.EchoAsync(endpoint);
+        // TODO: Call DICOM C-ECHO with AetTitleBox, HostnameBox, PortBox
+        await System.Threading.Tasks.Task.Delay(500);
 
-        StatusText.Text = ok
-            ? $"Echo OK to {endpoint.Title} ({endpoint.Hostname}:{endpoint.Port})"
-            : $"Echo FAILED to {endpoint.Title} ({endpoint.Hostname}:{endpoint.Port})";
+        StatusText.Text = "Global AE echo completed (TODO: real result).";
     }
 
-    private int ParsePort(string? text)
+    private async void OnLeftEchoClick(object? sender, RoutedEventArgs e)
     {
-        if (int.TryParse(text, out var port) && port > 0 && port < 65536)
-            return port;
+        StatusText.Text = "Pinging LEFT AE...";
+        // TODO: C-ECHO using LeftAeTitleBox, LeftHostnameBox, LeftPortBox
+        await System.Threading.Tasks.Task.Delay(500);
+        StatusText.Text = "LEFT AE echo completed (TODO: real result).";
+    }
 
-        return 104;
+    private async void OnRightEchoClick(object? sender, RoutedEventArgs e)
+    {
+        StatusText.Text = "Pinging RIGHT AE...";
+        // TODO: C-ECHO using RightAeTitleBox, RightHostnameBox, RightPortBox
+        await System.Threading.Tasks.Task.Delay(500);
+        StatusText.Text = "RIGHT AE echo completed (TODO: real result).";
+    }
+
+    // ----------------- Queries -------------------
+
+    private async void OnQueryLeftClick(object? sender, RoutedEventArgs e)
+    {
+        StatusText.Text = "Querying LEFT PACS...";
+
+        var fromDate = FromDatePicker.SelectedDate;
+        var toDate   = ToDatePicker.SelectedDate;
+
+        bool patient  = PatientCheck.IsChecked ?? false;
+        bool study    = StudyCheck.IsChecked ?? false;
+        bool series   = SeriesCheck.IsChecked ?? false;
+        bool instance = InstanceCheck.IsChecked ?? false;
+        bool frame    = FrameCheck.IsChecked ?? false;
+
+        // TODO: Build C-FIND against LEFT AE with these filters.
+
+        await System.Threading.Tasks.Task.Delay(500);
+
+        // TODO: Bind real results to LeftTree.
+        StatusText.Text = "LEFT query completed (TODO: bind results to tree).";
+    }
+
+    private async void OnQueryRightClick(object? sender, RoutedEventArgs e)
+    {
+        StatusText.Text = "Querying RIGHT PACS...";
+
+        var fromDate = FromDatePicker.SelectedDate;
+        var toDate   = ToDatePicker.SelectedDate;
+
+        bool patient  = PatientCheck.IsChecked ?? false;
+        bool study    = StudyCheck.IsChecked ?? false;
+        bool series   = SeriesCheck.IsChecked ?? false;
+        bool instance = InstanceCheck.IsChecked ?? false;
+        bool frame    = FrameCheck.IsChecked ?? false;
+
+        // TODO: Build C-FIND against RIGHT AE.
+
+        await System.Threading.Tasks.Task.Delay(500);
+
+        // TODO: Bind real results to RightTree.
+        StatusText.Text = "RIGHT query completed (TODO: bind results to tree).";
+    }
+
+    // ----------------- Moves / Sync -------------
+
+    private async void OnMoveLeftToRightClick(object? sender, RoutedEventArgs e)
+    {
+        StatusText.Text = "Moving selection LEFT → RIGHT (C-MOVE/C-STORE)...";
+
+        // TODO: Use current selection(s) in LeftTree as source.
+
+        await System.Threading.Tasks.Task.Delay(500);
+
+        StatusText.Text = "Move LEFT → RIGHT completed (TODO: real result).";
+    }
+
+    private async void OnMoveRightToLeftClick(object? sender, RoutedEventArgs e)
+    {
+        StatusText.Text = "Moving selection RIGHT → LEFT (C-MOVE/C-STORE)...";
+
+        // TODO: Use current selection(s) in RightTree as source.
+
+        await System.Threading.Tasks.Task.Delay(500);
+
+        StatusText.Text = "Move RIGHT → LEFT completed (TODO: real result).";
+    }
+
+    private void OnSyncClick(object? sender, RoutedEventArgs e)
+    {
+        StatusText.Text = "Starting sync (TODO: orchestration logic).";
+
+        // TODO: Start background sync job that compares left/right trees
+        // and schedules C-MOVE/C-STORE operations.
+    }
+
+    private void OnPauseClick(object? sender, RoutedEventArgs e)
+    {
+        StatusText.Text = "Sync paused (TODO: implement pause/cancel).";
+
+        // TODO: Implement pause/cancel on running sync.
     }
 }

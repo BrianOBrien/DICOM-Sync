@@ -5,13 +5,6 @@
         MinWidth="1150"
         Title="DICOM Sync">
 
-  <!--
-    Layout:
-      Row 0: Global AE
-      Row 1: Shared Date Range
-      Row 2: Left PACS | Actions | Right PACS
-      Row 3: Status bar
-  -->
   <Grid RowDefinitions="Auto,Auto,*,Auto">
 
     <!-- ========================================================= -->
@@ -66,50 +59,89 @@
                   Margin="0,0,4,0"
                   HorizontalAlignment="Right"
                   VerticalAlignment="Center"
-                  Click="OnEchoClick" />
+                  Click="OnGlobalEchoClick" />
 
         </Grid>
       </Border>
     </Border>
 
 
+
     <!-- ========================================================= -->
-    <!-- Row 1 : SHARED DATE RANGE BAR                             -->
+    <!-- Row 1 : DATE RANGE (1A) + SEARCH LEVELS (1B)              -->
     <!-- ========================================================= -->
     <Border Grid.Row="1"
             Margin="10,0,10,5"
             BorderBrush="Gray"
             BorderThickness="1"
             CornerRadius="4">
-      <Grid Margin="8">
-        <StackPanel Orientation="Horizontal"
+
+      <Grid Margin="8"
+            RowDefinitions="Auto,Auto">
+
+ <!-- ===== Row 1A: Date Range (centered, full controls visible) ===== -->
+<StackPanel Grid.Row="0"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="12">
+
+  <TextBlock Text="Date Range:"
+             VerticalAlignment="Center"
+             Margin="0,0,8,0" />
+
+  <TextBlock Text="From:"
+             VerticalAlignment="Center"
+             Margin="0,0,4,0" />
+
+  <DatePicker x:Name="FromDatePicker"
+              MinWidth="260"
+              Width="260" />
+
+  <TextBlock Text="To:"
+             VerticalAlignment="Center"
+             Margin="12,0,4,0" />
+
+  <DatePicker x:Name="ToDatePicker"
+              MinWidth="260"
+              Width="260" />
+</StackPanel>
+
+        <!-- ===== Row 1B: Search Levels (centered) ===== -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Spacing="12">
+                    Spacing="12"
+                    Margin="0,6,0,0">
 
-          <TextBlock Text="Date Range:"
-                     VerticalAlignment="Center" />
-
-          <TextBlock Text="From:"
-                     VerticalAlignment="Center" />
-          <DatePicker x:Name="FromDatePicker"
-                      HorizontalAlignment="Left"
-                      MinWidth="260"
-                      Width="260" />
-
-          <TextBlock Text="To:"
+          <TextBlock Text="Search Levels:"
                      VerticalAlignment="Center"
-                     Margin="12,0,0,0" />
-          <DatePicker x:Name="ToDatePicker"
-                      HorizontalAlignment="Left"
-                      MinWidth="260"
-                      Width="260" />
+                     Margin="0,0,8,0" />
 
+          <CheckBox x:Name="PatientCheck"
+                    Content="Patient"
+                    IsChecked="True" />
+
+          <CheckBox x:Name="StudyCheck"
+                    Content="Study"
+                    IsChecked="True" />
+
+          <CheckBox x:Name="SeriesCheck"
+                    Content="Series"
+                    IsChecked="True" />
+
+          <CheckBox x:Name="InstanceCheck"
+                    Content="Instance"
+                    IsChecked="True" />
+
+          <CheckBox x:Name="FrameCheck"
+                    Content="Frame"
+                    IsChecked="True" />
         </StackPanel>
+
       </Grid>
     </Border>
-
-
     <!-- ========================================================= -->
     <!-- Row 2 : LEFT PACS | ACTION PANEL | RIGHT PACS            -->
     <!-- ========================================================= -->
@@ -144,6 +176,7 @@
                          VerticalAlignment="Center"
                          Margin="0,0,4,0" />
               <TextBox Grid.Column="1"
+                       x:Name="LeftAeTitleBox"
                        Margin="0,0,8,0"
                        Watermark="LEFT_AE" />
 
@@ -152,6 +185,7 @@
                          VerticalAlignment="Center"
                          Margin="0,0,4,0" />
               <TextBox Grid.Column="3"
+                       x:Name="LeftHostnameBox"
                        Margin="0,0,8,0"
                        Watermark="left.host" />
 
@@ -160,6 +194,7 @@
                          VerticalAlignment="Center"
                          Margin="0,0,4,0" />
               <TextBox Grid.Column="5"
+                       x:Name="LeftPortBox"
                        Width="70"
                        Text="104"
                        Margin="0,0,8,0" />
@@ -169,7 +204,8 @@
                       Width="70"
                       Margin="0,0,4,0"
                       HorizontalAlignment="Right"
-                      VerticalAlignment="Center" />
+                      VerticalAlignment="Center"
+                      Click="OnLeftEchoClick" />
 
             </Grid>
           </Border>
@@ -180,8 +216,7 @@
                   BorderThickness="1"
                   CornerRadius="3">
             <TreeView Margin="4"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch">
+                      x:Name="LeftTree">
               <TreeViewItem Header="Left Root">
                 <TreeViewItem Header="Left 1.1"/>
                 <TreeViewItem Header="Left 1.2"/>
@@ -191,6 +226,7 @@
 
         </Grid>
       </Border>
+
 
 
       <!-- ========================================= -->
@@ -214,29 +250,36 @@
 
           <Button Content="Query Left"
                   Width="170"
-                  Margin="0,0,0,4" />
+                  Margin="0,0,0,4"
+                  Click="OnQueryLeftClick" />
 
           <Button Content="Query Right"
                   Width="170"
-                  Margin="0,0,0,4" />
+                  Margin="0,0,0,4"
+                  Click="OnQueryRightClick" />
 
           <Button Content="Move Left → Right"
                   Width="170"
-                  Margin="0,0,0,4" />
+                  Margin="0,0,0,4"
+                  Click="OnMoveLeftToRightClick" />
 
           <Button Content="Move Right → Left"
                   Width="170"
-                  Margin="0,0,0,4" />
+                  Margin="0,0,0,4"
+                  Click="OnMoveRightToLeftClick" />
 
           <Button Content="Sync"
                   Width="170"
-                  Margin="0,0,0,4" />
+                  Margin="0,0,0,4"
+                  Click="OnSyncClick" />
 
           <Button Content="Pause"
-                  Width="170" />
+                  Width="170"
+                  Click="OnPauseClick" />
 
         </StackPanel>
       </Border>
+
 
 
       <!-- ========================================= -->
@@ -266,6 +309,7 @@
                          VerticalAlignment="Center"
                          Margin="0,0,4,0" />
               <TextBox Grid.Column="1"
+                       x:Name="RightAeTitleBox"
                        Margin="0,0,8,0"
                        Watermark="RIGHT_AE" />
 
@@ -274,6 +318,7 @@
                          VerticalAlignment="Center"
                          Margin="0,0,4,0" />
               <TextBox Grid.Column="3"
+                       x:Name="RightHostnameBox"
                        Margin="0,0,8,0"
                        Watermark="right.host" />
 
@@ -282,6 +327,7 @@
                          VerticalAlignment="Center"
                          Margin="0,0,4,0" />
               <TextBox Grid.Column="5"
+                       x:Name="RightPortBox"
                        Width="70"
                        Text="104"
                        Margin="0,0,8,0" />
@@ -291,10 +337,12 @@
                       Width="70"
                       Margin="0,0,4,0"
                       HorizontalAlignment="Right"
-                      VerticalAlignment="Center" />
+                      VerticalAlignment="Center"
+                      Click="OnRightEchoClick" />
 
             </Grid>
           </Border>
+
 
           <!-- RIGHT TreeView -->
           <Border Grid.Row="1"
@@ -302,8 +350,7 @@
                   BorderThickness="1"
                   CornerRadius="3">
             <TreeView Margin="4"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch">
+                      x:Name="RightTree">
               <TreeViewItem Header="Right Root">
                 <TreeViewItem Header="Right 1.1" />
                 <TreeViewItem Header="Right 1.2" />
@@ -313,7 +360,9 @@
 
         </Grid>
       </Border>
+
     </Grid>
+
 
 
     <!-- ========================================================= -->
