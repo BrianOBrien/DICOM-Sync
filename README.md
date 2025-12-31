@@ -16,21 +16,6 @@ A cross-platform DICOM synchronization and query tool built using **Avalonia UI*
   - Pause
 
 ### Technology
-- .NET 8+
-- Avalonia 11
-- Cross-platform: Linux (Pi), macOS, Windows
-- MVC architecture planned
-
-### Status
-This is an early UI skeleton — functionality will be implemented next.
-
----
-
-## Building
-
-```bash
-dotnet build
-
-## Running
-dotnet run
+- Xojo
+- dcmtk
 
