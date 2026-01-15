@@ -474,13 +474,13 @@
   <ItemResult></ItemResult>
  </Method>
  <Method>
-  <ItemName>QueryCompleted</ItemName>
+  <ItemName>LeftQueryCompleted</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>1238560767</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Sub QueryCompleted(q as AQuery)</SourceLine>
+   <SourceLine>Sub LeftQueryCompleted(q as AQuery)</SourceLine>
    <SourceLine>dim dics(-1) as Dictionary</SourceLine>
    <SourceLine>dim d as Dictionary</SourceLine>
    <SourceLine>dim n as ANode</SourceLine>
@@ -503,12 +503,15 @@
    <SourceLine></SourceLine>
    <SourceLine>case enumLEVELS.STUDY</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>// Lets queue up the requests for each series in the study</SourceLine>
    <SourceLine>studyReq = StudyRequest(q.mRootNode)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>for each d in dics</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>study = new AStudy</SourceLine>
    <SourceLine>study.FromDictionary(d)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>LeftStudyReceived(study)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>studyReq.Children.Append(study)</SourceLine>
    <SourceLine></SourceLine>
@@ -520,13 +523,13 @@
    <SourceLine>subQuery.Port     = q.Port</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>subQuery.Query(q.mRoot, enumLEVELS.SERIES, study.QueryFindKeyValues, ASeries.QueryGetKeys, study)</SourceLine>
-   <SourceLine>mQueryPool.Append(subQuery)</SourceLine>
+   <SourceLine>leftQueryPool.Append(subQuery)</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>StudyReceived(study)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>next</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>case enumLEVELS.SERIES</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>study = AStudy(q.mRootNode)</SourceLine>
    <SourceLine></SourceLine>
@@ -535,8 +538,10 @@
    <SourceLine>series = new ASeries</SourceLine>
    <SourceLine>series.FromDictionary(d)</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>LeftSeriesReceived(series)</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>study.Children.Append(series)</SourceLine>
-   <SourceLine>SeriesReceived(series)</SourceLine>
+   <SourceLine>//SeriesReceived(series)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>// No sub query at the moment.</SourceLine>
    <SourceLine>next</SourceLine>
@@ -557,15 +562,16 @@
   <ItemResult></ItemResult>
  </Method>
  <Method>
-  <ItemName>SeriesReceived</ItemName>
+  <ItemName>LeftSeriesReceived</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>259336191</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Sub SeriesReceived(series as ASeries)</SourceLine>
+   <SourceLine>Sub LeftSeriesReceived(series as ASeries)</SourceLine>
    <SourceLine>System.DebugLog("Study :" + series.StudyUID.Value + " Series :" + series.SeriesUID.Value)</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>LeftSeries.Add(series)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -577,14 +583,15 @@
   <ItemResult></ItemResult>
  </Method>
  <Method>
-  <ItemName>StudyReceived</ItemName>
+  <ItemName>LeftStudyReceived</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>409081855</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Sub StudyReceived(study as AStudy)</SourceLine>
-   <SourceLine>System.DebugLog("Study :" + study.StudyUID.Value)</SourceLine>
+   <SourceLine>Sub LeftStudyReceived(study as AStudy)</SourceLine>
+   <SourceLine>//System.DebugLog("Study :" + study.StudyInstanceUID.Value)</SourceLine>
+   <SourceLine>LeftStudies.Add(study)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -758,17 +765,92 @@
   <IsShared>0</IsShared>
  </Property>
  <Property>
-  <ItemName>mQueryPool(-1)</ItemName>
+  <ItemName>LeftQueryPool(-1)</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>606300159</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>mQueryPool(-1) As AQuery</SourceLine>
+   <SourceLine>LeftQueryPool(-1) As AQuery</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>mQueryPool(-1) As AQuery</ItemDeclaration>
+  <ItemDeclaration>LeftQueryPool(-1) As AQuery</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>LeftStudies(-1)</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>35065855</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>LeftStudies(-1) As AStudy</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>LeftStudies(-1) As AStudy</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>RightStudies()</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>251269119</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>RightStudies() As AStudy</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>RightStudies() As AStudy</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>LeftSeries(-1)</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1493829631</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>LeftSeries(-1) As ASeries</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>LeftSeries(-1) As ASeries</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>RightSeries(-1)</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1040556031</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>RightSeries(-1) As ASeries</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>RightSeries(-1) As ASeries</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>RightQueryPool(-1)</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>21639167</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>RightQueryPool(-1) As AQuery</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>RightQueryPool(-1) As AQuery</ItemDeclaration>
   <ItemFlags>33</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
@@ -1098,21 +1180,21 @@
     <SourceLine>dim i as integer</SourceLine>
     <SourceLine>dim nothingRunning as Boolean = true</SourceLine>
     <SourceLine></SourceLine>
-    <SourceLine>for i=mQueryPool.Ubound DownTo 0</SourceLine>
-    <SourceLine>if mQueryPool(i).IsRunning then </SourceLine>
+    <SourceLine>for i=leftQueryPool.Ubound DownTo 0</SourceLine>
+    <SourceLine>if leftQueryPool(i).IsRunning then </SourceLine>
     <SourceLine>count = count + 1</SourceLine>
     <SourceLine>nothingRunning = false</SourceLine>
-    <SourceLine>elseif mQueryPool(i).IsFinished then</SourceLine>
-    <SourceLine>mQueryPool.Remove(i)</SourceLine>
+    <SourceLine>elseif leftQueryPool(i).IsFinished then</SourceLine>
+    <SourceLine>leftQueryPool.Remove(i)</SourceLine>
     <SourceLine>end if</SourceLine>
     <SourceLine>next</SourceLine>
     <SourceLine></SourceLine>
-    <SourceLine>for i=0 to mQueryPool.Ubound</SourceLine>
+    <SourceLine>for i=0 to leftQueryPool.Ubound</SourceLine>
     <SourceLine>if count &lt;= 5 then</SourceLine>
-    <SourceLine>if (not mQueryPool(i).IsRunning) and not (mQueryPool(i).IsFinished) then</SourceLine>
-    <SourceLine>AddHandler mQueryPool(i).Completed, WeakAddressOf QueryCompleted</SourceLine>
-    <SourceLine>System.DebugLog("execute: " + mQueryPool(i).cmd)</SourceLine>
-    <SourceLine>mQueryPool(i).Execute(mQueryPool(i).cmd)</SourceLine>
+    <SourceLine>if (not leftQueryPool(i).IsRunning) and not (leftQueryPool(i).IsFinished) then</SourceLine>
+    <SourceLine>AddHandler leftQueryPool(i).Completed, WeakAddressOf LeftQueryCompleted</SourceLine>
+    <SourceLine>System.DebugLog("execute: " + leftQueryPool(i).cmd)</SourceLine>
+    <SourceLine>leftQueryPool(i).Execute(leftQueryPool(i).cmd)</SourceLine>
     <SourceLine>count = count + 1</SourceLine>
     <SourceLine>nothingRunning = false</SourceLine>
     <SourceLine>end if</SourceLine>
@@ -1121,7 +1203,7 @@
     <SourceLine></SourceLine>
     <SourceLine>if nothingRunning then</SourceLine>
     <SourceLine>if StudyRequests.Ubound &gt; -1 then</SourceLine>
-    <SourceLine>//MessageBox("Done")</SourceLine>
+    <SourceLine>System.DebugLog("Left Idle")</SourceLine>
     <SourceLine>end if</SourceLine>
     <SourceLine>end if</SourceLine>
     <SourceLine></SourceLine>
@@ -1176,7 +1258,7 @@
     <SourceLine>MyQuery.Port = 11112</SourceLine>
     <SourceLine>MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
     <SourceLine></SourceLine>
-    <SourceLine>mQueryPool.Append(MyQuery)</SourceLine>
+    <SourceLine>leftQueryPool.Append(MyQuery)</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>next</SourceLine>
     <SourceLine></SourceLine>
@@ -1250,7 +1332,9 @@
   <PropertyVal Name="Left">20</PropertyVal>
   <PropertyVal Name="Name">LeftTree</PropertyVal>
   <PropertyVal Name="Super">DesktopTreeView</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
   <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
   <PropertyVal Name="Top">213</PropertyVal>
   <PropertyVal Name="Width">32</PropertyVal>
   <ControlIndex>0</ControlIndex>
@@ -1265,7 +1349,9 @@
   <PropertyVal Name="Left">628</PropertyVal>
   <PropertyVal Name="Name">RightTree</PropertyVal>
   <PropertyVal Name="Super">DesktopTreeView</PropertyVal>
+  <PropertyVal Name="TabIndex">1</PropertyVal>
   <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
   <PropertyVal Name="Top">213</PropertyVal>
   <PropertyVal Name="Width">32</PropertyVal>
   <ControlIndex>1</ControlIndex>
@@ -2675,7 +2761,7 @@
    <SourceLine>next</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>for each key in gets.Keys</SourceLine>
-   <SourceLine>if not queree.HasKey(key) then // If we've already processed this key.</SourceLine>
+   <SourceLine>if not (queree.HasKey(key) and queree.Value(key) &lt;&gt; "")  then // If we've already processed this key.</SourceLine>
    <SourceLine>cmd = cmd + " -k " + key</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine>next</SourceLine>
@@ -2687,7 +2773,7 @@
    <SourceLine>'139.48.221.112 105 -aec CGETROUTER -aet PACSYNC</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>cmd = cmd + " -aet " + MyAET + " -aec " + QueryAET + " " + host + " " + str(port)</SourceLine>
-   <SourceLine>System.DebugLog("Q:" + cmd)</SourceLine>
+   <SourceLine>System.DebugLog("query built:" + cmd)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
@@ -5371,7 +5457,7 @@
    <SourceLine></SourceLine>
    <SourceLine>PatientName = new DicomObjectBaseClass("Patient Name", "0010,0010")</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>StudyUID = new DicomObjectBaseClass("Study Instance UID", "0020,000D", "", false)</SourceLine>
+   <SourceLine>StudyInstanceUID = new DicomObjectBaseClass("Study Instance UID", "0020,000D", "", false)</SourceLine>
    <SourceLine>StudyID = new DicomObjectBaseClass("Study ID", "0020,0010")</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>NumberOfStudyRelatedSeries =  new DicomObjectBaseClass("Number Of Study Related Series", "0020,1206")</SourceLine>
@@ -5395,7 +5481,7 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function QueryFindKeyValues() As Dictionary</SourceLine>
    <SourceLine>dim d as new Dictionary</SourceLine>
-   <SourceLine>d.Value("0020,000D") = StudyUID.Value</SourceLine>
+   <SourceLine>d.Value("0020,000D") = StudyInstanceUID.Value</SourceLine>
    <SourceLine>return d</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Function</SourceLine>
@@ -5550,17 +5636,17 @@
   <IsShared>0</IsShared>
  </Property>
  <Property>
-  <ItemName>StudyUID</ItemName>
+  <ItemName>StudyInstanceUID</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>904673279</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>StudyUID As DicomObjectBaseClass</SourceLine>
+   <SourceLine>StudyInstanceUID As DicomObjectBaseClass</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>StudyUID As DicomObjectBaseClass</ItemDeclaration>
+  <ItemDeclaration>StudyInstanceUID As DicomObjectBaseClass</ItemDeclaration>
   <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
@@ -7619,12 +7705,12 @@
   <PartID>1995120639</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>FormDictionary As Dictionary</SourceLine>
+   <SourceLine>Property FormDictionary As Dictionary</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
   <ItemDeclaration>FormDictionary As Dictionary</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
+  <ItemFlags>33</ItemFlags>
   <IsShared>0</IsShared>
   <SetAccessor>
    <TextEncoding>134217984</TextEncoding>
@@ -7999,92 +8085,35 @@
   <ItemData>0</ItemData>
  </WarningPreferences>
  <BreakPointGroup>
-  <PartID>224845823</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Private Function NodeFromDict(d As Dictionary) As DicomNode</UnitID>
-  <lineNum>27</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>1926866943</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub Echo(AET As String, AEC As String, Host As String, Port As String)</UnitID>
-  <lineNum>1</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>1926866943</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub Echo(AET As String, AEC As String, Host As String, Port As String)</UnitID>
-  <lineNum>11</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
   <PartID>2019475455</PartID>
   <ItemName></ItemName>
   <UnitType>Method</UnitType>
-  <UnitID>Sub StudyReceived(study as AStudy)</UnitID>
-  <lineNum>1</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>2019475455</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub SeriesReceived(series as ASeries)</UnitID>
-  <lineNum>1</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>1345527807</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Function ParseResults() As Dictionary()</UnitID>
-  <lineNum>1</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>1345527807</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Function ParseResults() As Dictionary()</UnitID>
-  <lineNum>51</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>2019475455</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub QueryCompleted(q as AQuery)</UnitID>
-  <lineNum>14</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>2019475455</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub QueryCompleted(q as AQuery)</UnitID>
-  <lineNum>23</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>2019475455</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub QueryCompleted(q as AQuery)</UnitID>
-  <lineNum>48</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>2019475455</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub QueryCompleted(q as AQuery)</UnitID>
-  <lineNum>56</lineNum>
+  <UnitID>Sub LeftSeriesReceived(series as ASeries)</UnitID>
+  <lineNum>3</lineNum>
  </BreakPointGroup>
  <StudioWindowState>
-  <EditBounds><Rect left="73" top="116" width="2210" height="898"/></EditBounds>
+  <EditBounds><Rect left="201" top="104" width="1823" height="941"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
-   <EditorCount>1</EditorCount>
+   <EditorCount>3</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>MainWindow.QueryCompleted</EditorLocation>
+    <EditorLocation>dicom.Get</EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>2019475455</EditingPartID>
+    <EditingPartID>1094053887</EditingPartID>
+    <EditorPath></EditorPath>
+   </Editor>
+   <Editor>
+    <EditorIndex>1</EditorIndex>
+    <EditorLocation>dicom</EditorLocation>
+    <EditorPath></EditorPath>
+    <EditingPartID>1094053887</EditingPartID>
+    <EditorPath></EditorPath>
+   </Editor>
+   <Editor>
+    <EditorIndex>2</EditorIndex>
+    <EditorLocation></EditorLocation>
+    <EditorPath></EditorPath>
     <EditorPath></EditorPath>
    </Editor>
    <SelectedTab>0</SelectedTab>
