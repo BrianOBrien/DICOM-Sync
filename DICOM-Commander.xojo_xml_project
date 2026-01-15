@@ -4808,6 +4808,7 @@
    <SourceLine>SeriesDescription = new DicomObjectBaseClass("Series Description", "0008,103E")</SourceLine>
    <SourceLine>SeriesNumber = new DicomObjectBaseClass("Series Number", "0020,0011")</SourceLine>
    <SourceLine>SeriesTime = new DicomObjectBaseClass("Time", "0008,0031")</SourceLine>
+   <SourceLine>SOPClassUID = new DicomObjectBaseClass("SOP Class UID", "0008,0016")</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
@@ -4862,6 +4863,93 @@
   <IsShared>1</IsShared>
   <ItemParams></ItemParams>
   <ItemResult>Dictionary</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ToTreeNodeJson</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1474658303</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ToTreeNodeJson() As String</SourceLine>
+   <SourceLine>Var d As New Dictionary</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var studyUID As String = SafeValue(StudyUID)</SourceLine>
+   <SourceLine>Var seriesUID As String = SafeValue(SeriesUID)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>d.Value("id") = "SERIES:" + seriesUID</SourceLine>
+   <SourceLine>d.Value("parentId") = "STUDY:" + studyUID</SourceLine>
+   <SourceLine>d.Value("type") = "series"</SourceLine>
+   <SourceLine>d.Value("caption") = BuildCaption()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var payload As New Dictionary</SourceLine>
+   <SourceLine>payload.Value("StudyUID") = studyUID</SourceLine>
+   <SourceLine>payload.Value("SeriesUID") = seriesUID</SourceLine>
+   <SourceLine>payload.Value("SeriesNumber") = SafeValue(SeriesNumber)</SourceLine>
+   <SourceLine>payload.Value("Modality") = SafeValue(Modality)</SourceLine>
+   <SourceLine>payload.Value("SeriesDescription") = SafeValue(SeriesDescription)</SourceLine>
+   <SourceLine>payload.Value("NumberOfImages") = SafeValue(NumberOfImages)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>d.Value("data") = payload</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return GenerateJSON(d)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>BuildCaption</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1749981183</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function BuildCaption() As String</SourceLine>
+   <SourceLine>Var parts() As String</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var num As String = SafeValue(SeriesNumber)</SourceLine>
+   <SourceLine>Var moda As String = SafeValue(Modality)</SourceLine>
+   <SourceLine>Var desc As String = SafeValue(SeriesDescription)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If num &lt;&gt; "" Then parts.Add("Series " + num)</SourceLine>
+   <SourceLine>If moda &lt;&gt; "" Then parts.Add(moda)</SourceLine>
+   <SourceLine>If desc &lt;&gt; "" Then parts.Add(desc)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If parts.Count = 0 Then parts.Add("Series")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return String.FromArray(parts, "  |  ")</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>SafeValue</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1505595391</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function SafeValue(d As DicomObjectBaseClass) As String</SourceLine>
+   <SourceLine>If d Is Nil Then Return ""</SourceLine>
+   <SourceLine>Return d.Value.Trim</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As DicomObjectBaseClass</ItemParams>
+  <ItemResult>String</ItemResult>
  </Method>
  <Property>
   <ItemName>Modality</ItemName>
@@ -4983,6 +5071,21 @@
   <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
+ <Property>
+  <ItemName>SOPClassUID</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1968273407</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>SOPClassUID As DicomObjectBaseClass</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>SOPClassUID As DicomObjectBaseClass</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Name</ObjName>
@@ -5068,6 +5171,7 @@
   <SetAccessor>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Set</SourceLine>
+   <SourceLine>mDisplayName = value</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Set</SourceLine>
   </SetAccessor>
@@ -5095,6 +5199,7 @@
   <SetAccessor>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Set</SourceLine>
+   <SourceLine>mGroupElement = value</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Set</SourceLine>
   </SetAccessor>
@@ -5514,6 +5619,92 @@
   <IsShared>1</IsShared>
   <ItemParams></ItemParams>
   <ItemResult>Dictionary</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ToTreeNodeJson</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>204630015</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ToTreeNodeJson() As String</SourceLine>
+   <SourceLine>Var d As New Dictionary</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var uid As String = SafeValue(StudyInstanceUID)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>d.Value("id") = "STUDY:" + uid</SourceLine>
+   <SourceLine>d.Value("type") = "study"</SourceLine>
+   <SourceLine>d.Value("caption") = BuildCaption()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Optional payload (for selection, context menus, etc.)</SourceLine>
+   <SourceLine>Var payload As New Dictionary</SourceLine>
+   <SourceLine>payload.Value("StudyInstanceUID") = uid</SourceLine>
+   <SourceLine>payload.Value("PatientName") = SafeValue(PatientName)</SourceLine>
+   <SourceLine>payload.Value("StudyDate") = SafeValue(StudyDate)</SourceLine>
+   <SourceLine>payload.Value("StudyTime") = SafeValue(StudyTime)</SourceLine>
+   <SourceLine>payload.Value("StudyDescription") = SafeValue(StudyDescription)</SourceLine>
+   <SourceLine>payload.Value("AccessionNumber") = SafeValue(AccessionNumber)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>d.Value("data") = payload</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return GenerateJSON(d)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>BuildCaption</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>595451903</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function BuildCaption() As String</SourceLine>
+   <SourceLine>Var parts() As String</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var pn As String = SafeValue(PatientName)</SourceLine>
+   <SourceLine>Var dt As String = SafeValue(StudyDate)</SourceLine>
+   <SourceLine>Var desc As String = SafeValue(StudyDescription)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If pn &lt;&gt; "" Then parts.Add(pn)</SourceLine>
+   <SourceLine>If dt &lt;&gt; "" Then parts.Add(dt)</SourceLine>
+   <SourceLine>If desc &lt;&gt; "" Then parts.Add(desc)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If parts.Count = 0 Then parts.Add("Study")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return String.FromArray(parts, "  |  ")</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>SafeValue</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1667692543</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function SafeValue(d As DicomObjectBaseClass) As String</SourceLine>
+   <SourceLine>If d Is Nil Then Return ""</SourceLine>
+   <SourceLine>Return d.Value.Trim</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As DicomObjectBaseClass</ItemParams>
+  <ItemResult>String</ItemResult>
  </Method>
  <Property>
   <ItemName>AccessionNumber</ItemName>
@@ -7645,139 +7836,6 @@
   </ItemSource>
   <ItemFlags>0</ItemFlags>
  </Note>
- <Property>
-  <ItemName>dicomKeys</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>2041055231</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>dicomKeys As Dictionary</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>dicomKeys As Dictionary</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <SetAccessor>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Set</SourceLine>
-   <SourceLine>mDictionary = value</SourceLine>
-   <SourceLine>End Set</SourceLine>
-  </SetAccessor>
-  <GetAccessor>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Get</SourceLine>
-   <SourceLine>if mDictionary = nil then</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mDictionary = new Dictionary</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mDictionary.Value("0008,0005") = "SpecificCharacterSet"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,0020") = "Study Date"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,0021") = "Series Date"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,0030") = "Study Time"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,0031") = "Series Time"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,0050") = "Accession Number"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,0052") ="QueryRetrieveLevel"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,0054") ="Retrieve AE Title"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mDictionary.Value("0008,0060") = "Modality"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,1030") = "Study Description"</SourceLine>
-   <SourceLine>mDictionary.Value("0008,103E") = "Series Description"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mDictionary.Value("0010,0010") = "Patient Name"</SourceLine>
-   <SourceLine>mDictionary.Value("0010,0020") = "Patient ID"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mDictionary.Value("0020,000D") = "Study Instance UID"</SourceLine>
-   <SourceLine>mDictionary.Value("0020,000E") = "Series Instance UID"</SourceLine>
-   <SourceLine>mDictionary.Value("0020,0010") = "Study ID"</SourceLine>
-   <SourceLine>mDictionary.Value("0020,0011") = "Series Number"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine>return mDictionary</SourceLine>
-   <SourceLine>End Get</SourceLine>
-  </GetAccessor>
- </Property>
- <Property>
-  <ItemName>FormDictionary</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1995120639</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Property FormDictionary As Dictionary</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>FormDictionary As Dictionary</ItemDeclaration>
-  <ItemFlags>33</ItemFlags>
-  <IsShared>0</IsShared>
-  <SetAccessor>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Set</SourceLine>
-   <SourceLine>mFormDictionary = value</SourceLine>
-   <SourceLine>End Set</SourceLine>
-  </SetAccessor>
-  <GetAccessor>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Get</SourceLine>
-   <SourceLine>if mFormDictionary = nil then</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mFormDictionary = new Dictionary</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,0020") = "Study Date"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,0021") = "Series Date"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,0030") = "Study Time"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,0031") = "Series Time"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,0050") = "Accession Number"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,0054") ="Retrieve AE Title"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,0060") = "Modality"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,1030") = "Study Description"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0008,103E") = "Series Description"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mFormDictionary.Value("0010,0010") = "Patient Name"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0010,0020") = "Patient ID"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>mFormDictionary.Value("0020,0010") = "Study ID"</SourceLine>
-   <SourceLine>mFormDictionary.Value("0020,0011") = "Series Number"</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>return mFormDictionary</SourceLine>
-   <SourceLine>End Get</SourceLine>
-  </GetAccessor>
- </Property>
- <Property>
-  <ItemName>mDictionary</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1160495103</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>mDictionary As Dictionary</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>mDictionary As Dictionary</ItemDeclaration>
-  <ItemFlags>33</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <Property>
-  <ItemName>mFormDictionary</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1068212223</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>mFormDictionary As Dictionary</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>mFormDictionary As Dictionary</ItemDeclaration>
-  <ItemFlags>33</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
  <ViewBehavior>
   <ViewProperty>
    <ObjName>Name</ObjName>
@@ -8091,16 +8149,23 @@
   <UnitID>Sub LeftSeriesReceived(series as ASeries)</UnitID>
   <lineNum>3</lineNum>
  </BreakPointGroup>
+ <BreakPointGroup>
+  <PartID>2019475455</PartID>
+  <ItemName></ItemName>
+  <UnitType>Method</UnitType>
+  <UnitID>Sub LeftQueryCompleted(q as AQuery)</UnitID>
+  <lineNum>43</lineNum>
+ </BreakPointGroup>
  <StudioWindowState>
-  <EditBounds><Rect left="201" top="104" width="1823" height="941"/></EditBounds>
+  <EditBounds><Rect left="573" top="100" width="1823" height="941"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
    <EditorCount>3</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>dicom.Get</EditorLocation>
+    <EditorLocation>ASeries.Constructor</EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>1094053887</EditingPartID>
+    <EditingPartID>1424208901</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <Editor>
