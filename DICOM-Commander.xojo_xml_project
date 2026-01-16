@@ -298,21 +298,6 @@
    <SourceLine></SourceLine>
    <SourceLine>var RootQ as New AQuery()</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>//r as enumROOTS=enumROOTS.STUDY, </SourceLine>
-   <SourceLine>//l as enumLEVELS=enumLEVELS.STUDY, </SourceLine>
-   <SourceLine>//queree as dictionary, </SourceLine>
-   <SourceLine>//gets as Dictionary, </SourceLine>
-   <SourceLine>//res as ANode</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>//studyDateRange as string, </SourceLine>
-   <SourceLine>//AccessionNumber as string, </SourceLine>
-   <SourceLine>//ModalitiesInStudy as string, </SourceLine>
-   <SourceLine>//PatientID as string, </SourceLine>
-   <SourceLine>//PatientName as string, </SourceLine>
-   <SourceLine>//StudyInstanceUID as string</SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>StudyRequests.Append(new StudyRequest("", "", "", "3TRES-MB-4213", "", ""))</SourceLine>
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4215", "", ""))</SourceLine>
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4216", "", ""))</SourceLine>
@@ -322,14 +307,6 @@
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4251", "", ""))</SourceLine>
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4252", "", ""))</SourceLine>
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-5040", "", ""))</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>' Get trees from ModelSync</SourceLine>
-   <SourceLine>LeftRoot  = ModelSync.LoadDicomTreeFromJSON(ModelSync.LeftSampleJSON)</SourceLine>
-   <SourceLine>RightRoot = ModelSync.LoadDicomTreeFromJSON(ModelSync.RightSampleJSON)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>' Populate our custom tree controls</SourceLine>
-   <SourceLine>PopulateTreeView(LeftTree, LeftRoot)</SourceLine>
-   <SourceLine>PopulateTreeView(RightTree, RightRoot)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LayoutUI</SourceLine>
    <SourceLine></SourceLine>
@@ -530,8 +507,7 @@
    <SourceLine></SourceLine>
    <SourceLine>case enumLEVELS.SERIES</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>study = AStudy(q.mRootNode)</SourceLine>
+   <SourceLine>//study = AStudy(q.mRootNode)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>for each d in dics</SourceLine>
    <SourceLine></SourceLine>
@@ -540,7 +516,7 @@
    <SourceLine></SourceLine>
    <SourceLine>LeftSeriesReceived(series)</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>study.Children.Append(series)</SourceLine>
+   <SourceLine>//study.Children.Append(series)</SourceLine>
    <SourceLine>//SeriesReceived(series)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>// No sub query at the moment.</SourceLine>
@@ -569,7 +545,7 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub LeftSeriesReceived(series as ASeries)</SourceLine>
-   <SourceLine>System.DebugLog("Study :" + series.StudyUID.Value + " Series :" + series.SeriesUID.Value)</SourceLine>
+   <SourceLine>System.DebugLog("\tStudy :" + series.StudyUID.Value + " Series :" + series.SeriesUID.Value)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LeftSeries.Add(series)</SourceLine>
    <SourceLine></SourceLine>
@@ -1102,12 +1078,6 @@
   <ItemName>dicom</ItemName>
  </Using>
  <ControlBehavior>
-  <Superclass>DesktopTreeView</Superclass>
- </ControlBehavior>
- <ControlBehavior>
-  <Superclass>DesktopTreeView</Superclass>
- </ControlBehavior>
- <ControlBehavior>
   <Superclass>AEEndpointView</Superclass>
   <HookInstance>
    <ItemName>Echo</ItemName>
@@ -1190,7 +1160,7 @@
     <SourceLine>next</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>for i=0 to leftQueryPool.Ubound</SourceLine>
-    <SourceLine>if count &lt;= 5 then</SourceLine>
+    <SourceLine>if count &lt; 4 then</SourceLine>
     <SourceLine>if (not leftQueryPool(i).IsRunning) and not (leftQueryPool(i).IsFinished) then</SourceLine>
     <SourceLine>AddHandler leftQueryPool(i).Completed, WeakAddressOf LeftQueryCompleted</SourceLine>
     <SourceLine>System.DebugLog("execute: " + leftQueryPool(i).cmd)</SourceLine>
@@ -1202,10 +1172,35 @@
     <SourceLine>next</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>if nothingRunning then</SourceLine>
-    <SourceLine>if StudyRequests.Ubound &gt; -1 then</SourceLine>
+    <SourceLine>if StudyRequests.Ubound = -1 then</SourceLine>
     <SourceLine>System.DebugLog("Left Idle")</SourceLine>
     <SourceLine>end if</SourceLine>
     <SourceLine>end if</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>While LeftStudies.Count &gt; 0</SourceLine>
+    <SourceLine>Var s As AStudy = LeftStudies(0)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// process in original order</SourceLine>
+    <SourceLine>LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// remove the one you just processed</SourceLine>
+    <SourceLine>leftStudies.RemoveAt(0)</SourceLine>
+    <SourceLine>Wend</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>While LeftSeries.Count &gt; 0</SourceLine>
+    <SourceLine>Var s As ASeries = LeftSeries(0)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// process in original order</SourceLine>
+    <SourceLine>LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// remove the one you just processed</SourceLine>
+    <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
+    <SourceLine>Wend</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>LeftTree.Refresh</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -1324,40 +1319,12 @@
    </ItemSource>
   </HookInstance>
  </ControlBehavior>
- <Control>
-  <ControlClass>DesktopTreeView</ControlClass>
-  <ItemName>DesktopTreeView</ItemName>
-  <PropertyVal Name="Height">32</PropertyVal>
-  <PropertyVal Name="Index">-2147483648</PropertyVal>
-  <PropertyVal Name="Left">20</PropertyVal>
-  <PropertyVal Name="Name">LeftTree</PropertyVal>
-  <PropertyVal Name="Super">DesktopTreeView</PropertyVal>
-  <PropertyVal Name="TabIndex">0</PropertyVal>
-  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
-  <PropertyVal Name="TabStop">True</PropertyVal>
-  <PropertyVal Name="Top">213</PropertyVal>
-  <PropertyVal Name="Width">32</PropertyVal>
-  <ControlIndex>0</ControlIndex>
-  <Locked>0</Locked>
-  <PartID>1783021567</PartID>
- </Control>
- <Control>
-  <ControlClass>DesktopTreeView</ControlClass>
-  <ItemName>DesktopTreeView</ItemName>
-  <PropertyVal Name="Height">32</PropertyVal>
-  <PropertyVal Name="Index">-2147483648</PropertyVal>
-  <PropertyVal Name="Left">628</PropertyVal>
-  <PropertyVal Name="Name">RightTree</PropertyVal>
-  <PropertyVal Name="Super">DesktopTreeView</PropertyVal>
-  <PropertyVal Name="TabIndex">1</PropertyVal>
-  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
-  <PropertyVal Name="TabStop">True</PropertyVal>
-  <PropertyVal Name="Top">213</PropertyVal>
-  <PropertyVal Name="Width">32</PropertyVal>
-  <ControlIndex>1</ControlIndex>
-  <Locked>0</Locked>
-  <PartID>1570492415</PartID>
- </Control>
+ <ControlBehavior>
+  <Superclass>TreeView.DesktopTreeView</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TreeView.DesktopTreeView</Superclass>
+ </ControlBehavior>
  <Control>
   <ControlClass>AEEndpointView</ControlClass>
   <ItemName>AEEndpointView</ItemName>
@@ -1392,7 +1359,7 @@
   <PropertyVal Name="Transparent">False</PropertyVal>
   <PropertyVal Name="Visible">True</PropertyVal>
   <PropertyVal Name="Width">512</PropertyVal>
-  <ControlIndex>2</ControlIndex>
+  <ControlIndex>0</ControlIndex>
   <Locked>0</Locked>
   <PartID>1383090175</PartID>
  </Control>
@@ -1430,7 +1397,7 @@
   <PropertyVal Name="Transparent">False</PropertyVal>
   <PropertyVal Name="Visible">True</PropertyVal>
   <PropertyVal Name="Width">512</PropertyVal>
-  <ControlIndex>3</ControlIndex>
+  <ControlIndex>1</ControlIndex>
   <Locked>0</Locked>
   <PartID>826226687</PartID>
  </Control>
@@ -1468,7 +1435,7 @@
   <PropertyVal Name="Transparent">False</PropertyVal>
   <PropertyVal Name="Visible">True</PropertyVal>
   <PropertyVal Name="Width">512</PropertyVal>
-  <ControlIndex>4</ControlIndex>
+  <ControlIndex>2</ControlIndex>
   <Locked>0</Locked>
   <PartID>273862655</PartID>
  </Control>
@@ -1482,7 +1449,7 @@
   <PropertyVal Name="Scope">2</PropertyVal>
   <PropertyVal Name="Super">Timer</PropertyVal>
   <PropertyVal Name="TabPanelIndex">0</PropertyVal>
-  <ControlIndex>5</ControlIndex>
+  <ControlIndex>3</ControlIndex>
   <Locked>0</Locked>
   <PartID>2000728063</PartID>
  </Control>
@@ -1517,9 +1484,115 @@
   <PropertyVal Name="Transparent">False</PropertyVal>
   <PropertyVal Name="Visible">True</PropertyVal>
   <PropertyVal Name="Width">72</PropertyVal>
-  <ControlIndex>6</ControlIndex>
+  <ControlIndex>4</ControlIndex>
   <Locked>0</Locked>
   <PartID>983382015</PartID>
+ </Control>
+ <Control>
+  <ControlClass>TreeView.DesktopTreeView</ControlClass>
+  <ItemName>TreeView.DesktopTreeView</ItemName>
+  <PropertyVal Name="AllowAutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="AllowAutoHideScrollbars">True</PropertyVal>
+  <PropertyVal Name="AllowExpandableRows">False</PropertyVal>
+  <PropertyVal Name="AllowFocusRing">True</PropertyVal>
+  <PropertyVal Name="AllowResizableColumns">False</PropertyVal>
+  <PropertyVal Name="AllowRowDragging">False</PropertyVal>
+  <PropertyVal Name="AllowRowReordering">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="ColumnCount">1</PropertyVal>
+  <PropertyVal Name="ColumnWidths"></PropertyVal>
+  <PropertyVal Name="DefaultRowHeight">-1</PropertyVal>
+  <PropertyVal Name="DropIndicatorVisible">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="FontName">System</PropertyVal>
+  <PropertyVal Name="FontSize">0.0</PropertyVal>
+  <PropertyVal Name="FontUnit">0</PropertyVal>
+  <PropertyVal Name="GridLineStyle">0</PropertyVal>
+  <PropertyVal Name="HasBorder">True</PropertyVal>
+  <PropertyVal Name="HasHeader">False</PropertyVal>
+  <PropertyVal Name="HasHorizontalScrollbar">False</PropertyVal>
+  <PropertyVal Name="HasVerticalScrollbar">True</PropertyVal>
+  <PropertyVal Name="HeadingIndex">-1</PropertyVal>
+  <PropertyVal Name="Height">508</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="InitialValue"></PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="Name">LeftTree</PropertyVal>
+  <PropertyVal Name="RequiresSelection">False</PropertyVal>
+  <PropertyVal Name="RowSelectionType">0</PropertyVal>
+  <PropertyVal Name="Scope">1</PropertyVal>
+  <PropertyVal Name="Super">TreeView.DesktopTreeView</PropertyVal>
+  <PropertyVal Name="TabIndex">8</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Tooltip"></PropertyVal>
+  <PropertyVal Name="Top">213</PropertyVal>
+  <PropertyVal Name="Transparent">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Width">512</PropertyVal>
+  <PropertyVal Name="_ScrollWidth">-1</PropertyVal>
+  <ControlIndex>5</ControlIndex>
+  <Locked>0</Locked>
+  <PartID>2134433791</PartID>
+ </Control>
+ <Control>
+  <ControlClass>TreeView.DesktopTreeView</ControlClass>
+  <ItemName>TreeView.DesktopTreeView</ItemName>
+  <PropertyVal Name="AllowAutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="AllowAutoHideScrollbars">True</PropertyVal>
+  <PropertyVal Name="AllowExpandableRows">False</PropertyVal>
+  <PropertyVal Name="AllowFocusRing">True</PropertyVal>
+  <PropertyVal Name="AllowResizableColumns">False</PropertyVal>
+  <PropertyVal Name="AllowRowDragging">False</PropertyVal>
+  <PropertyVal Name="AllowRowReordering">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="ColumnCount">1</PropertyVal>
+  <PropertyVal Name="ColumnWidths"></PropertyVal>
+  <PropertyVal Name="DefaultRowHeight">-1</PropertyVal>
+  <PropertyVal Name="DropIndicatorVisible">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="FontName">System</PropertyVal>
+  <PropertyVal Name="FontSize">0.0</PropertyVal>
+  <PropertyVal Name="FontUnit">0</PropertyVal>
+  <PropertyVal Name="GridLineStyle">0</PropertyVal>
+  <PropertyVal Name="HasBorder">True</PropertyVal>
+  <PropertyVal Name="HasHeader">False</PropertyVal>
+  <PropertyVal Name="HasHorizontalScrollbar">False</PropertyVal>
+  <PropertyVal Name="HasVerticalScrollbar">True</PropertyVal>
+  <PropertyVal Name="HeadingIndex">-1</PropertyVal>
+  <PropertyVal Name="Height">508</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="InitialValue"></PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Left">628</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="Name">RightTree</PropertyVal>
+  <PropertyVal Name="RequiresSelection">False</PropertyVal>
+  <PropertyVal Name="RowSelectionType">0</PropertyVal>
+  <PropertyVal Name="Scope">1</PropertyVal>
+  <PropertyVal Name="Super">TreeView.DesktopTreeView</PropertyVal>
+  <PropertyVal Name="TabIndex">9</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Tooltip"></PropertyVal>
+  <PropertyVal Name="Top">213</PropertyVal>
+  <PropertyVal Name="Transparent">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Width">512</PropertyVal>
+  <PropertyVal Name="_ScrollWidth">-1</PropertyVal>
+  <ControlIndex>6</ControlIndex>
+  <Locked>0</Locked>
+  <PartID>479866879</PartID>
  </Control>
 </block>
 <block type="Menu" ID="929814527">
@@ -4253,6 +4326,115 @@
   <ItemParams></ItemParams>
   <ItemResult></ItemResult>
  </Method>
+ <Method>
+  <ItemName>AddJsonNode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1198981119</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub AddJsonNode(nodeJson As String)</SourceLine>
+   <SourceLine>Var v As Variant</SourceLine>
+   <SourceLine>Try</SourceLine>
+   <SourceLine>v = ParseJSON(nodeJson)</SourceLine>
+   <SourceLine>Catch</SourceLine>
+   <SourceLine>Return</SourceLine>
+   <SourceLine>End Try</SourceLine>
+   <SourceLine>If Not (v IsA Dictionary) Then Return</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var d As Dictionary = Dictionary(v)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var id As String = d.Lookup("id", "").StringValue.Trim</SourceLine>
+   <SourceLine>If id = "" Then Return</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var parentId As String = d.Lookup("parentId", "").StringValue.Trim</SourceLine>
+   <SourceLine>Var caption As String = d.Lookup("caption", "").StringValue</SourceLine>
+   <SourceLine>If caption = "" Then caption = id</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Find existing node by id</SourceLine>
+   <SourceLine>Var existing As DesktopTreeViewNode = FindNodeById_(id)</SourceLine>
+   <SourceLine>If existing &lt;&gt; Nil Then</SourceLine>
+   <SourceLine>existing.Caption = caption</SourceLine>
+   <SourceLine>existing.Tag = d</SourceLine>
+   <SourceLine>RefreshTree</SourceLine>
+   <SourceLine>Return</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Find parent (root if no parentId)</SourceLine>
+   <SourceLine>Var parentNode As DesktopTreeViewNode</SourceLine>
+   <SourceLine>If parentId &lt;&gt; "" Then</SourceLine>
+   <SourceLine>parentNode = FindNodeById_(parentId)</SourceLine>
+   <SourceLine>If parentNode Is Nil Then Return ' series arrived before its study</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var n As DesktopTreeViewNode = AddNode(parentNode, caption)</SourceLine>
+   <SourceLine>n.Tag = d</SourceLine>
+   <SourceLine>If parentNode &lt;&gt; Nil Then parentNode.Expanded = True</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>RefreshTree</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>nodeJson As String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>FindNodeById_</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1942126591</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function FindNodeById_(id As String) As DesktopTreeViewNode</SourceLine>
+   <SourceLine>For Each root As DesktopTreeViewNode In RootNodes</SourceLine>
+   <SourceLine>Var found As DesktopTreeViewNode = FindNodeByIdRec_(root, id)</SourceLine>
+   <SourceLine>If found &lt;&gt; Nil Then Return found</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>id As String</ItemParams>
+  <ItemResult>DesktopTreeViewNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>FindNodeByIdRec_</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1144090623</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function FindNodeByIdRec_(n As DesktopTreeViewNode, id As String) As DesktopTreeViewNode</SourceLine>
+   <SourceLine>If n Is Nil Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If n.Tag IsA Dictionary Then</SourceLine>
+   <SourceLine>Var d As Dictionary = Dictionary(n.Tag)</SourceLine>
+   <SourceLine>Var thisId As String = d.Lookup("id", "").StringValue.Trim</SourceLine>
+   <SourceLine>If thisId = id Then Return n</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>For Each c As DesktopTreeViewNode In n.Children</SourceLine>
+   <SourceLine>Var found As DesktopTreeViewNode = FindNodeByIdRec_(c, id)</SourceLine>
+   <SourceLine>If found &lt;&gt; Nil Then Return found</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return Nil</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>n As DesktopTreeViewNode, id As String</ItemParams>
+  <ItemResult>DesktopTreeViewNode</ItemResult>
+ </Method>
  <Property>
   <ItemName>RootNodes(-1)</ItemName>
   <Compatibility></Compatibility>
@@ -5639,11 +5821,15 @@
    <SourceLine>' Optional payload (for selection, context menus, etc.)</SourceLine>
    <SourceLine>Var payload As New Dictionary</SourceLine>
    <SourceLine>payload.Value("StudyInstanceUID") = uid</SourceLine>
+   <SourceLine>payload.Value("AccessionNumber") = SafeValue(AccessionNumber)</SourceLine>
+   <SourceLine>payload.Value("ModalitiesInStudy") = SafeValue(ModalitiesInStudy)</SourceLine>
+   <SourceLine>payload.Value("NumberOfStudyRelatedSeries") = SafeValue(NumberOfStudyRelatedSeries)</SourceLine>
+   <SourceLine>payload.Value("NumberOfStudyRelatedInstances") = SafeValue(NumberOfStudyRelatedInstances)</SourceLine>
    <SourceLine>payload.Value("PatientName") = SafeValue(PatientName)</SourceLine>
    <SourceLine>payload.Value("StudyDate") = SafeValue(StudyDate)</SourceLine>
-   <SourceLine>payload.Value("StudyTime") = SafeValue(StudyTime)</SourceLine>
    <SourceLine>payload.Value("StudyDescription") = SafeValue(StudyDescription)</SourceLine>
-   <SourceLine>payload.Value("AccessionNumber") = SafeValue(AccessionNumber)</SourceLine>
+   <SourceLine>payload.Value("StudyID") = SafeValue(StudyID)</SourceLine>
+   <SourceLine>payload.Value("StudyTime") = SafeValue(StudyTime)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>d.Value("data") = payload</SourceLine>
    <SourceLine></SourceLine>
@@ -8144,39 +8330,25 @@
  </WarningPreferences>
  <BreakPointGroup>
   <PartID>2019475455</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub LeftSeriesReceived(series as ASeries)</UnitID>
-  <lineNum>3</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>2019475455</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Sub LeftQueryCompleted(q as AQuery)</UnitID>
-  <lineNum>43</lineNum>
+  <ItemName>QueryPoolTimer</ItemName>
+  <UnitType>Event Handler</UnitType>
+  <UnitID>Sub Action()</UnitID>
+  <lineNum>28</lineNum>
  </BreakPointGroup>
  <StudioWindowState>
-  <EditBounds><Rect left="573" top="100" width="1823" height="941"/></EditBounds>
+  <EditBounds><Rect left="96" top="112" width="2647" height="944"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
-   <EditorCount>3</EditorCount>
+   <EditorCount>2</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>ASeries.Constructor</EditorLocation>
+    <EditorLocation>MainWindow.Controls.QueryPoolTimer.Action</EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>1424208901</EditingPartID>
+    <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <Editor>
     <EditorIndex>1</EditorIndex>
-    <EditorLocation>dicom</EditorLocation>
-    <EditorPath></EditorPath>
-    <EditingPartID>1094053887</EditingPartID>
-    <EditorPath></EditorPath>
-   </Editor>
-   <Editor>
-    <EditorIndex>2</EditorIndex>
     <EditorLocation></EditorLocation>
     <EditorPath></EditorPath>
     <EditorPath></EditorPath>
