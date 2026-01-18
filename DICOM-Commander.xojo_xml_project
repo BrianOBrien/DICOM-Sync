@@ -309,6 +309,7 @@
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-5040", "", ""))</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LayoutUI</SourceLine>
+   <SourceLine>RightTree.LoadFromJSON(SamplePatientStudyJSON)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -695,6 +696,79 @@
   <ItemParams>myAET as string, RemoteAET as String, host as String, port as String</ItemParams>
   <ItemResult></ItemResult>
  </Method>
+ <Method>
+  <ItemName>TimerEvent</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>107558911</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub TimerEvent()</SourceLine>
+   <SourceLine>dim count as integer = 0</SourceLine>
+   <SourceLine>dim i as integer</SourceLine>
+   <SourceLine>dim nothingRunning as Boolean = true</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>for i=leftQueryPool.Ubound DownTo 0</SourceLine>
+   <SourceLine>if leftQueryPool(i).IsRunning then </SourceLine>
+   <SourceLine>count = count + 1</SourceLine>
+   <SourceLine>nothingRunning = false</SourceLine>
+   <SourceLine>elseif leftQueryPool(i).IsFinished then</SourceLine>
+   <SourceLine>leftQueryPool.Remove(i)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>for i=0 to leftQueryPool.Ubound</SourceLine>
+   <SourceLine>if count &lt; 4 then</SourceLine>
+   <SourceLine>if (not leftQueryPool(i).IsRunning) and not (leftQueryPool(i).IsFinished) then</SourceLine>
+   <SourceLine>AddHandler leftQueryPool(i).Completed, WeakAddressOf LeftQueryCompleted</SourceLine>
+   <SourceLine>System.DebugLog("execute: " + leftQueryPool(i).cmd)</SourceLine>
+   <SourceLine>leftQueryPool(i).Execute(leftQueryPool(i).cmd)</SourceLine>
+   <SourceLine>count = count + 1</SourceLine>
+   <SourceLine>nothingRunning = false</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>if nothingRunning then</SourceLine>
+   <SourceLine>if StudyRequests.Ubound = -1 then</SourceLine>
+   <SourceLine>System.DebugLog("Left Idle")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>While LeftStudies.Count &gt; 0</SourceLine>
+   <SourceLine>Var s As AStudy = LeftStudies(0)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// process in original order</SourceLine>
+   <SourceLine>LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// remove the one you just processed</SourceLine>
+   <SourceLine>leftStudies.RemoveAt(0)</SourceLine>
+   <SourceLine>Wend</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>While LeftSeries.Count &gt; 0</SourceLine>
+   <SourceLine>Var s As ASeries = LeftSeries(0)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// process in original order</SourceLine>
+   <SourceLine>LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// remove the one you just processed</SourceLine>
+   <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
+   <SourceLine>Wend</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>LeftTree.Refresh</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
  <Property>
   <ItemName>LeftRoot</ItemName>
   <Compatibility></Compatibility>
@@ -1068,6 +1142,16 @@
    <ItemType>Boolean</ItemType>
   </ViewProperty>
  </ViewBehavior>
+ <Constant>
+  <ItemName>SamplePatientStudyJSON</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1398906879</PartID>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemType>6</ItemType>
+  <ItemDef><Hex bytes="3967">7B0A20202274797065223A202270617469656E74222C0A2020226964223A202250415449454E5449442D3132333435222C0A20202264617461223A207B0A202020202250617469656E744944223A202250415449454E5449442D3132333435222C0A202020202250617469656E744E616D65223A2022444F455E4A414E45220A20207D2C0A20202273747564696573223A205B0A202020207B0A2020202020202274797065223A20227374756479222C0A202020202020226964223A2022312E322E332E342E352E31222C0A2020202020202264617461223A207B0A2020202020202020225374756479496E7374616E6365554944223A2022312E322E332E342E352E31222C0A202020202020202022537475647944617465223A20223230323630313137222C0A20202020202020202253747564794465736372697074696F6E223A20224D524920425241494E220A2020202020207D2C0A20202020202022736572696573223A205B0A20202020202020207B0A202020202020202020202274797065223A2022736572696573222C0A20202020202020202020226964223A2022312E322E332E342E352E312E31222C0A202020202020202020202264617461223A207B0A20202020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E352E312E31222C0A202020202020202020202020225365726965734E756D626572223A20312C0A202020202020202020202020224D6F64616C697479223A20224D52220A202020202020202020207D2C0A2020202020202020202022696E7374616E636573223A205B0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E312E312E31222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E312E312E31222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20312C0A202020202020202020202020202020202269734D756C74696672616D65223A2066616C73650A20202020202020202020202020207D0A2020202020202020202020207D2C0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E312E312E32222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E312E312E32222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20322C0A202020202020202020202020202020202269734D756C74696672616D65223A2066616C73650A20202020202020202020202020207D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D2C0A20202020202020207B0A202020202020202020202274797065223A2022736572696573222C0A20202020202020202020226964223A2022312E322E332E342E352E312E32222C0A202020202020202020202264617461223A207B0A20202020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E352E312E32222C0A202020202020202020202020225365726965734E756D626572223A20322C0A202020202020202020202020224D6F64616C697479223A20224D52220A202020202020202020207D2C0A2020202020202020202022696E7374616E636573223A205B0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E312E322E31222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E312E322E31222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20312C0A202020202020202020202020202020202269734D756C74696672616D65223A20747275652C0A20202020202020202020202020202020224E756D6265724F664672616D6573223A203138300A20202020202020202020202020207D0A2020202020202020202020207D2C0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E312E322E32222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E312E322E32222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20322C0A202020202020202020202020202020202269734D756C74696672616D65223A20747275652C0A20202020202020202020202020202020224E756D6265724F664672616D6573223A203230300A20202020202020202020202020207D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D0A2020202020205D0A202020207D2C0A0A202020207B0A2020202020202274797065223A20227374756479222C0A202020202020226964223A2022312E322E332E342E352E32222C0A2020202020202264617461223A207B0A2020202020202020225374756479496E7374616E6365554944223A2022312E322E332E342E352E32222C0A202020202020202022537475647944617465223A20223230323630313138222C0A20202020202020202253747564794465736372697074696F6E223A20224354204348455354220A2020202020207D2C0A20202020202022736572696573223A205B0A20202020202020207B0A202020202020202020202274797065223A2022736572696573222C0A20202020202020202020226964223A2022312E322E332E342E352E322E31222C0A202020202020202020202264617461223A207B0A20202020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E352E322E31222C0A202020202020202020202020225365726965734E756D626572223A20312C0A202020202020202020202020224D6F64616C697479223A20224354220A202020202020202020207D2C0A2020202020202020202022696E7374616E636573223A205B0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E322E312E31222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E322E312E31222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20312C0A202020202020202020202020202020202269734D756C74696672616D65223A20747275652C0A20202020202020202020202020202020224E756D6265724F664672616D6573223A203330300A20202020202020202020202020207D0A2020202020202020202020207D2C0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E322E312E32222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E322E312E32222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20322C0A202020202020202020202020202020202269734D756C74696672616D65223A20747275652C0A20202020202020202020202020202020224E756D6265724F664672616D6573223A203238300A20202020202020202020202020207D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D2C0A20202020202020207B0A202020202020202020202274797065223A2022736572696573222C0A20202020202020202020226964223A2022312E322E332E342E352E322E32222C0A202020202020202020202264617461223A207B0A20202020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E352E322E32222C0A202020202020202020202020225365726965734E756D626572223A20322C0A202020202020202020202020224D6F64616C697479223A20224354220A202020202020202020207D2C0A2020202020202020202022696E7374616E636573223A205B0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E322E322E31222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E322E322E31222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20312C0A202020202020202020202020202020202269734D756C74696672616D65223A2066616C73650A20202020202020202020202020207D0A2020202020202020202020207D2C0A2020202020202020202020207B0A20202020202020202020202020202274797065223A2022696E7374616E6365222C0A2020202020202020202020202020226964223A2022312E322E332E342E352E322E322E32222C0A20202020202020202020202020202264617461223A207B0A2020202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E352E322E322E32222C0A2020202020202020202020202020202022496E7374616E63654E756D626572223A20322C0A202020202020202020202020202020202269734D756C74696672616D65223A2066616C73650A20202020202020202020202020207D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D0A2020202020205D0A202020207D0A20205D0A7D0A</Hex></ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
  <Using>
   <ItemName>dcmtk</ItemName>
  </Using>
@@ -1146,61 +1230,7 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub Action()</SourceLine>
-    <SourceLine>dim count as integer = 0</SourceLine>
-    <SourceLine>dim i as integer</SourceLine>
-    <SourceLine>dim nothingRunning as Boolean = true</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>for i=leftQueryPool.Ubound DownTo 0</SourceLine>
-    <SourceLine>if leftQueryPool(i).IsRunning then </SourceLine>
-    <SourceLine>count = count + 1</SourceLine>
-    <SourceLine>nothingRunning = false</SourceLine>
-    <SourceLine>elseif leftQueryPool(i).IsFinished then</SourceLine>
-    <SourceLine>leftQueryPool.Remove(i)</SourceLine>
-    <SourceLine>end if</SourceLine>
-    <SourceLine>next</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>for i=0 to leftQueryPool.Ubound</SourceLine>
-    <SourceLine>if count &lt; 4 then</SourceLine>
-    <SourceLine>if (not leftQueryPool(i).IsRunning) and not (leftQueryPool(i).IsFinished) then</SourceLine>
-    <SourceLine>AddHandler leftQueryPool(i).Completed, WeakAddressOf LeftQueryCompleted</SourceLine>
-    <SourceLine>System.DebugLog("execute: " + leftQueryPool(i).cmd)</SourceLine>
-    <SourceLine>leftQueryPool(i).Execute(leftQueryPool(i).cmd)</SourceLine>
-    <SourceLine>count = count + 1</SourceLine>
-    <SourceLine>nothingRunning = false</SourceLine>
-    <SourceLine>end if</SourceLine>
-    <SourceLine>end if</SourceLine>
-    <SourceLine>next</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>if nothingRunning then</SourceLine>
-    <SourceLine>if StudyRequests.Ubound = -1 then</SourceLine>
-    <SourceLine>System.DebugLog("Left Idle")</SourceLine>
-    <SourceLine>end if</SourceLine>
-    <SourceLine>end if</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>While LeftStudies.Count &gt; 0</SourceLine>
-    <SourceLine>Var s As AStudy = LeftStudies(0)</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>// process in original order</SourceLine>
-    <SourceLine>LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>// remove the one you just processed</SourceLine>
-    <SourceLine>leftStudies.RemoveAt(0)</SourceLine>
-    <SourceLine>Wend</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>While LeftSeries.Count &gt; 0</SourceLine>
-    <SourceLine>Var s As ASeries = LeftSeries(0)</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>// process in original order</SourceLine>
-    <SourceLine>LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>// remove the one you just processed</SourceLine>
-    <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
-    <SourceLine>Wend</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>LeftTree.Refresh</SourceLine>
+    <SourceLine>TimerEvent</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -1323,7 +1353,7 @@
   <Superclass>TreeView.DesktopTreeView</Superclass>
  </ControlBehavior>
  <ControlBehavior>
-  <Superclass>TreeView.DesktopTreeView</Superclass>
+  <Superclass>DesktopTreeViewCtrl</Superclass>
  </ControlBehavior>
  <Control>
   <ControlClass>AEEndpointView</ControlClass>
@@ -1543,58 +1573,39 @@
   <PartID>2134433791</PartID>
  </Control>
  <Control>
-  <ControlClass>TreeView.DesktopTreeView</ControlClass>
-  <ItemName>TreeView.DesktopTreeView</ItemName>
+  <ControlClass>DesktopTreeViewCtrl</ControlClass>
+  <ItemName>DesktopTreeViewCtrl</ItemName>
   <PropertyVal Name="AllowAutoDeactivate">True</PropertyVal>
-  <PropertyVal Name="AllowAutoHideScrollbars">True</PropertyVal>
-  <PropertyVal Name="AllowExpandableRows">False</PropertyVal>
-  <PropertyVal Name="AllowFocusRing">True</PropertyVal>
-  <PropertyVal Name="AllowResizableColumns">False</PropertyVal>
-  <PropertyVal Name="AllowRowDragging">False</PropertyVal>
-  <PropertyVal Name="AllowRowReordering">False</PropertyVal>
-  <PropertyVal Name="Bold">False</PropertyVal>
-  <PropertyVal Name="ColumnCount">1</PropertyVal>
-  <PropertyVal Name="ColumnWidths"></PropertyVal>
-  <PropertyVal Name="DefaultRowHeight">-1</PropertyVal>
-  <PropertyVal Name="DropIndicatorVisible">False</PropertyVal>
+  <PropertyVal Name="AllowFocus">False</PropertyVal>
+  <PropertyVal Name="AllowFocusRing">False</PropertyVal>
+  <PropertyVal Name="AllowTabs">True</PropertyVal>
+  <PropertyVal Name="Backdrop">0</PropertyVal>
+  <PropertyVal Name="BackgroundColor">&amp;hFFFFFF</PropertyVal>
+  <PropertyVal Name="Composited">False</PropertyVal>
   <PropertyVal Name="Enabled">True</PropertyVal>
-  <PropertyVal Name="FontName">System</PropertyVal>
-  <PropertyVal Name="FontSize">0.0</PropertyVal>
-  <PropertyVal Name="FontUnit">0</PropertyVal>
-  <PropertyVal Name="GridLineStyle">0</PropertyVal>
-  <PropertyVal Name="HasBorder">True</PropertyVal>
-  <PropertyVal Name="HasHeader">False</PropertyVal>
-  <PropertyVal Name="HasHorizontalScrollbar">False</PropertyVal>
-  <PropertyVal Name="HasVerticalScrollbar">True</PropertyVal>
-  <PropertyVal Name="HeadingIndex">-1</PropertyVal>
-  <PropertyVal Name="Height">508</PropertyVal>
+  <PropertyVal Name="HasBackgroundColor">False</PropertyVal>
+  <PropertyVal Name="Height">517</PropertyVal>
   <PropertyVal Name="Index">-2147483648</PropertyVal>
-  <PropertyVal Name="InitialValue"></PropertyVal>
-  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
   <PropertyVal Name="Left">628</PropertyVal>
   <PropertyVal Name="LockBottom">False</PropertyVal>
   <PropertyVal Name="LockLeft">True</PropertyVal>
   <PropertyVal Name="LockRight">False</PropertyVal>
   <PropertyVal Name="LockTop">True</PropertyVal>
   <PropertyVal Name="Name">RightTree</PropertyVal>
-  <PropertyVal Name="RequiresSelection">False</PropertyVal>
-  <PropertyVal Name="RowSelectionType">0</PropertyVal>
-  <PropertyVal Name="Scope">1</PropertyVal>
-  <PropertyVal Name="Super">TreeView.DesktopTreeView</PropertyVal>
+  <PropertyVal Name="Scope">2</PropertyVal>
+  <PropertyVal Name="Super">DesktopTreeViewCtrl</PropertyVal>
   <PropertyVal Name="TabIndex">9</PropertyVal>
   <PropertyVal Name="TabPanelIndex">0</PropertyVal>
   <PropertyVal Name="TabStop">True</PropertyVal>
   <PropertyVal Name="Tooltip"></PropertyVal>
-  <PropertyVal Name="Top">213</PropertyVal>
+  <PropertyVal Name="Top">209</PropertyVal>
   <PropertyVal Name="Transparent">False</PropertyVal>
-  <PropertyVal Name="Underline">False</PropertyVal>
   <PropertyVal Name="Visible">True</PropertyVal>
   <PropertyVal Name="Width">512</PropertyVal>
-  <PropertyVal Name="_ScrollOffset">0</PropertyVal>
-  <PropertyVal Name="_ScrollWidth">-1</PropertyVal>
   <ControlIndex>6</ControlIndex>
   <Locked>0</Locked>
-  <PartID>479866879</PartID>
+  <PartID>1158606847</PartID>
  </Control>
 </block>
 <block type="Menu" ID="929814527">
@@ -8313,73 +8324,412 @@
   </ViewProperty>
  </ViewBehavior>
 </block>
-<block type="Folder" ID="1551396863">
+<block type="Folder" ID="1243072511">
  <ObjName>TreeViewKit</ObjName>
  <ObjContainerID>0</ObjContainerID>
 </block>
-<block type="ColorAsset" ID="1237256191">
- <ObjName>TreeSelectedTextColor</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <ColorRepresentation>
-  <ColorType>1</ColorType>
-  <ColorPlatform>1</ColorPlatform>
-  <ColorLight>00000000</ColorLight>
-  <ColorDark>FFFFFF00</ColorDark>
- </ColorRepresentation>
+<block type="Module" ID="193116159">
+ <ObjName>TreeNode</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>302163967</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor(nodeName As String, nodeValue As String = "", parentPath As String = "")</SourceLine>
+   <SourceLine>Name = nodeName</SourceLine>
+   <SourceLine>Value = nodeValue</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If parentPath = "" Then</SourceLine>
+   <SourceLine>Path = nodeName</SourceLine>
+   <SourceLine>Else</SourceLine>
+   <SourceLine>Path = parentPath + "/" + nodeName</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>nodeName As String, nodeValue As String = "", parentPath As String = ""</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>HasChildren</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1324824575</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function HasChildren() As Boolean</SourceLine>
+   <SourceLine>Return Children.Count &gt; 0</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>Boolean</ItemResult>
+ </Method>
+ <Property>
+  <ItemName>Name</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1213286399</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Name As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Name As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Value</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1696307199</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Value As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Value As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Path</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1119150079</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Path As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Path As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Children(-1)</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1002506239</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Children(-1) As TreeNode</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Children(-1) As TreeNode</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Value</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Path</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+ </ViewBehavior>
 </block>
-<block type="ColorAsset" ID="1992912895">
- <ObjName>TreeRowEvenColor</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <ColorRepresentation>
-  <ColorType>1</ColorType>
-  <ColorPlatform>1</ColorPlatform>
-  <ColorLight>FFFFFF00</ColorLight>
-  <ColorDark>2B2B2B00</ColorDark>
- </ColorRepresentation>
+<block type="Module" ID="1760063487">
+ <ObjName>TreeNodeFactory</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <IsClass>0</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>FromJSON</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>12980223</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function FromJSON(jsonText As String, rootName As String = "root") As TreeNode</SourceLine>
+   <SourceLine>Var v As Variant = ParseJSON(jsonText)</SourceLine>
+   <SourceLine>Return FromVariant(rootName, v, "")</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>jsonText As String, rootName As String = "root"</ItemParams>
+  <ItemResult>TreeNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>FromDictionary</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1650180095</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function FromDictionary(d As Dictionary, rootName As String = "root") As TreeNode</SourceLine>
+   <SourceLine>Return FromVariant(rootName, d, "")</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As Dictionary, rootName As String = "root"</ItemParams>
+  <ItemResult>TreeNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>FromVariant</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>492965887</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function FromVariant(name As String, v As Variant, parentPath As String) As TreeNode</SourceLine>
+   <SourceLine>Var n As New TreeNode(name, "", parentPath)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If v.IsNull Then</SourceLine>
+   <SourceLine>n.Value = "null"</SourceLine>
+   <SourceLine>Return n</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If v IsA Dictionary Then</SourceLine>
+   <SourceLine>Var d As Dictionary = Dictionary(v)</SourceLine>
+   <SourceLine>For Each k As Variant In d.Keys</SourceLine>
+   <SourceLine>n.Children.Add(FromVariant(k.StringValue, d.Value(k), n.Path))</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>Return n</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If v.IsArray Then</SourceLine>
+   <SourceLine>Var arr() As Variant = v</SourceLine>
+   <SourceLine>For i As Integer = 0 To arr.LastIndex</SourceLine>
+   <SourceLine>Var idx As String = "[" + i.ToString + "]"</SourceLine>
+   <SourceLine>n.Children.Add(FromVariant(idx, arr(i), n.Path))</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>Return n</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>n.Value = v.StringValue</SourceLine>
+   <SourceLine>Return n</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>name As String, v As Variant, parentPath As String</ItemParams>
+  <ItemResult>TreeNode</ItemResult>
+ </Method>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
 </block>
-<block type="ColorAsset" ID="1695471615">
- <ObjName>TreeRowOddColor</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <ColorRepresentation>
-  <ColorType>1</ColorType>
-  <ColorPlatform>1</ColorPlatform>
-  <ColorLight>F4F4F400</ColorLight>
-  <ColorDark>32323200</ColorDark>
- </ColorRepresentation>
-</block>
-<block type="ColorAsset" ID="42258431">
- <ObjName>TreeSelectedRowColor</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <ColorRepresentation>
-  <ColorType>1</ColorType>
-  <ColorPlatform>1</ColorPlatform>
-  <ColorLight>C9BFE000</ColorLight>
-  <ColorDark>5A4F7300</ColorDark>
- </ColorRepresentation>
-</block>
-<block type="ColorAsset" ID="1711785983">
- <ObjName>TreeHoverOverRowColor</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <ColorRepresentation>
-  <ColorType>1</ColorType>
-  <ColorPlatform>1</ColorPlatform>
-  <ColorLight>E6F2FF00</ColorLight>
-  <ColorDark>3A3A3A00</ColorDark>
- </ColorRepresentation>
-</block>
-<block type="ColorAsset" ID="373432319">
- <ObjName>TreeTextColor</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <ColorRepresentation>
-  <ColorType>1</ColorType>
-  <ColorPlatform>1</ColorPlatform>
-  <ColorLight>00000000</ColorLight>
-  <ColorDark>FFFFFF00</ColorDark>
- </ColorRepresentation>
+<block type="Module" ID="1405976575">
+ <ObjName>RowInfo</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Property>
+  <ItemName>Node</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1698330623</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Node As TreeNode</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Node As TreeNode</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Depth</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>991668223</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Depth As Integer</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Depth As Integer</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Expanded</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1242322943</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Expanded As Boolean</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Expanded As Boolean</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>HasChildren</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>378994687</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>HasChildren As Boolean</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>HasChildren As Boolean</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Depth</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Expanded</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>HasChildren</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
 </block>
 <block type="DesktopWindow" ID="1329225727">
- <ObjName>DesktopTreeView</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
+ <ObjName>DesktopTreeViewCtrl</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
  <IsClass>1</IsClass>
  <Superclass>DesktopContainer</Superclass>
  <ItemFlags>1</ItemFlags>
@@ -9006,404 +9356,65 @@
   <PartID>785805311</PartID>
  </Control>
 </block>
-<block type="Module" ID="193116159">
- <ObjName>TreeNode</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <IsClass>1</IsClass>
- <ItemFlags>1</ItemFlags>
- <IsInterface>0</IsInterface>
- <Compatibility></Compatibility>
- <Method>
-  <ItemName>Constructor</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>302163967</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Sub Constructor(nodeName As String, nodeValue As String = "", parentPath As String = "")</SourceLine>
-   <SourceLine>Name = nodeName</SourceLine>
-   <SourceLine>Value = nodeValue</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If parentPath = "" Then</SourceLine>
-   <SourceLine>Path = nodeName</SourceLine>
-   <SourceLine>Else</SourceLine>
-   <SourceLine>Path = parentPath + "/" + nodeName</SourceLine>
-   <SourceLine>End If</SourceLine>
-   <SourceLine>End Sub</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams>nodeName As String, nodeValue As String = "", parentPath As String = ""</ItemParams>
-  <ItemResult></ItemResult>
- </Method>
- <Method>
-  <ItemName>HasChildren</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1324824575</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function HasChildren() As Boolean</SourceLine>
-   <SourceLine>Return Children.Count &gt; 0</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams></ItemParams>
-  <ItemResult>Boolean</ItemResult>
- </Method>
- <Property>
-  <ItemName>Name</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1213286399</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Name As String</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>Name As String</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <Property>
-  <ItemName>Value</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1696307199</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Value As String</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>Value As String</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <Property>
-  <ItemName>Path</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1119150079</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Path As String</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>Path As String</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <Property>
-  <ItemName>Children(-1)</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1002506239</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Children(-1) As TreeNode</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>Children(-1) As TreeNode</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <ViewBehavior>
-  <ViewProperty>
-   <ObjName>Name</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Index</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <PropertyValue>-2147483648</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Super</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Left</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Top</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Value</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>String</ItemType>
-   <EditorType>MultiLineEditor</EditorType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Path</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>String</ItemType>
-   <EditorType>MultiLineEditor</EditorType>
-  </ViewProperty>
- </ViewBehavior>
+<block type="ColorAsset" ID="373432319">
+ <ObjName>TreeTextColor</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <ColorRepresentation>
+  <ColorType>1</ColorType>
+  <ColorPlatform>1</ColorPlatform>
+  <ColorLight>00000000</ColorLight>
+  <ColorDark>FFFFFF00</ColorDark>
+ </ColorRepresentation>
 </block>
-<block type="Module" ID="1760063487">
- <ObjName>TreeNodeFactory</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <IsClass>0</IsClass>
- <ItemFlags>1</ItemFlags>
- <IsInterface>0</IsInterface>
- <Compatibility></Compatibility>
- <Method>
-  <ItemName>FromJSON</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>12980223</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function FromJSON(jsonText As String, rootName As String = "root") As TreeNode</SourceLine>
-   <SourceLine>Var v As Variant = ParseJSON(jsonText)</SourceLine>
-   <SourceLine>Return FromVariant(rootName, v, "")</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams>jsonText As String, rootName As String = "root"</ItemParams>
-  <ItemResult>TreeNode</ItemResult>
- </Method>
- <Method>
-  <ItemName>FromDictionary</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1650180095</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function FromDictionary(d As Dictionary, rootName As String = "root") As TreeNode</SourceLine>
-   <SourceLine>Return FromVariant(rootName, d, "")</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams>d As Dictionary, rootName As String = "root"</ItemParams>
-  <ItemResult>TreeNode</ItemResult>
- </Method>
- <Method>
-  <ItemName>FromVariant</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>492965887</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function FromVariant(name As String, v As Variant, parentPath As String) As TreeNode</SourceLine>
-   <SourceLine>Var n As New TreeNode(name, "", parentPath)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If v.IsNull Then</SourceLine>
-   <SourceLine>n.Value = "null"</SourceLine>
-   <SourceLine>Return n</SourceLine>
-   <SourceLine>End If</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If v IsA Dictionary Then</SourceLine>
-   <SourceLine>Var d As Dictionary = Dictionary(v)</SourceLine>
-   <SourceLine>For Each k As Variant In d.Keys</SourceLine>
-   <SourceLine>n.Children.Add(FromVariant(k.StringValue, d.Value(k), n.Path))</SourceLine>
-   <SourceLine>Next</SourceLine>
-   <SourceLine>Return n</SourceLine>
-   <SourceLine>End If</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If v.IsArray Then</SourceLine>
-   <SourceLine>Var arr() As Variant = v</SourceLine>
-   <SourceLine>For i As Integer = 0 To arr.LastIndex</SourceLine>
-   <SourceLine>Var idx As String = "[" + i.ToString + "]"</SourceLine>
-   <SourceLine>n.Children.Add(FromVariant(idx, arr(i), n.Path))</SourceLine>
-   <SourceLine>Next</SourceLine>
-   <SourceLine>Return n</SourceLine>
-   <SourceLine>End If</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>n.Value = v.StringValue</SourceLine>
-   <SourceLine>Return n</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams>name As String, v As Variant, parentPath As String</ItemParams>
-  <ItemResult>TreeNode</ItemResult>
- </Method>
- <ViewBehavior>
-  <ViewProperty>
-   <ObjName>Name</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Index</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <PropertyValue>-2147483648</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Super</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Left</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Top</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
- </ViewBehavior>
+<block type="ColorAsset" ID="1237256191">
+ <ObjName>TreeSelectedTextColor</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <ColorRepresentation>
+  <ColorType>1</ColorType>
+  <ColorPlatform>1</ColorPlatform>
+  <ColorLight>00000000</ColorLight>
+  <ColorDark>FFFFFF00</ColorDark>
+ </ColorRepresentation>
 </block>
-<block type="Module" ID="1405976575">
- <ObjName>RowInfo</ObjName>
- <ObjContainerID>1551396863</ObjContainerID>
- <IsClass>1</IsClass>
- <ItemFlags>1</ItemFlags>
- <IsInterface>0</IsInterface>
- <Compatibility></Compatibility>
- <Property>
-  <ItemName>Node</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1698330623</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Node As TreeNode</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>Node As TreeNode</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <Property>
-  <ItemName>Depth</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>991668223</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Depth As Integer</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>Depth As Integer</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <Property>
-  <ItemName>Expanded</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1242322943</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Expanded As Boolean</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>Expanded As Boolean</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <Property>
-  <ItemName>HasChildren</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>378994687</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>HasChildren As Boolean</SourceLine>
-   <SourceLine></SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>HasChildren As Boolean</ItemDeclaration>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
- </Property>
- <ViewBehavior>
-  <ViewProperty>
-   <ObjName>Name</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Index</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <PropertyValue>-2147483648</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Super</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Left</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Top</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Depth</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Expanded</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>Boolean</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>HasChildren</ObjName>
-   <PropertyGroup>Behavior</PropertyGroup>
-   <ItemType>Boolean</ItemType>
-  </ViewProperty>
- </ViewBehavior>
+<block type="ColorAsset" ID="1992912895">
+ <ObjName>TreeRowEvenColor</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <ColorRepresentation>
+  <ColorType>1</ColorType>
+  <ColorPlatform>1</ColorPlatform>
+  <ColorLight>FFFFFF00</ColorLight>
+  <ColorDark>2B2B2B00</ColorDark>
+ </ColorRepresentation>
+</block>
+<block type="ColorAsset" ID="1695471615">
+ <ObjName>TreeRowOddColor</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <ColorRepresentation>
+  <ColorType>1</ColorType>
+  <ColorPlatform>1</ColorPlatform>
+  <ColorLight>F4F4F400</ColorLight>
+  <ColorDark>32323200</ColorDark>
+ </ColorRepresentation>
+</block>
+<block type="ColorAsset" ID="42258431">
+ <ObjName>TreeSelectedRowColor</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <ColorRepresentation>
+  <ColorType>1</ColorType>
+  <ColorPlatform>1</ColorPlatform>
+  <ColorLight>C9BFE000</ColorLight>
+  <ColorDark>5A4F7300</ColorDark>
+ </ColorRepresentation>
+</block>
+<block type="ColorAsset" ID="1711785983">
+ <ObjName>TreeHoverOverRowColor</ObjName>
+ <ObjContainerID>1243072511</ObjContainerID>
+ <ColorRepresentation>
+  <ColorType>1</ColorType>
+  <ColorPlatform>1</ColorPlatform>
+  <ColorLight>E6F2FF00</ColorLight>
+  <ColorDark>3A3A3A00</ColorDark>
+ </ColorRepresentation>
 </block>
 <block type="UIState" ID="0">
  <WarningPreferences>
@@ -9422,23 +9433,16 @@
   <ItemName>16</ItemName>
   <ItemData>0</ItemData>
  </WarningPreferences>
- <BreakPointGroup>
-  <PartID>2019475455</PartID>
-  <ItemName>QueryPoolTimer</ItemName>
-  <UnitType>Event Handler</UnitType>
-  <UnitID>Sub Action()</UnitID>
-  <lineNum>28</lineNum>
- </BreakPointGroup>
  <StudioWindowState>
-  <EditBounds><Rect left="586" top="221" width="1558" height="712"/></EditBounds>
+  <EditBounds><Rect left="342" top="100" width="1927" height="949"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
    <EditorCount>2</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>TreeView</EditorLocation>
+    <EditorLocation>MainWindow.Opening</EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>1798225919</EditingPartID>
+    <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <Editor>
