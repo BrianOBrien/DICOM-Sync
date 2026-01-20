@@ -309,8 +309,7 @@
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-5040", "", ""))</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LayoutUI</SourceLine>
-   <SourceLine>LeftTree.LoadFromJSON(SamplePatientStudyJSON)</SourceLine>
-   <SourceLine>RightTree.LoadFromJSON(SamplePatientStudyJSON1)</SourceLine>
+   <SourceLine>RightTree.LoadFromJSON(SamplePatientStudyJSON)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -371,9 +370,7 @@
    <SourceLine>Sub LeftQueryCompleted(q as AQuery)</SourceLine>
    <SourceLine>dim dics(-1) as Dictionary</SourceLine>
    <SourceLine>dim d as Dictionary</SourceLine>
-   <SourceLine>dim n as ANode</SourceLine>
    <SourceLine>dim subQuery as AQuery</SourceLine>
-   <SourceLine>dim nextLevel as enumLEVELS</SourceLine>
    <SourceLine>dim studyReq as StudyRequest</SourceLine>
    <SourceLine>dim study as AStudy</SourceLine>
    <SourceLine>dim series as ASeries</SourceLine>
@@ -456,7 +453,7 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub LeftSeriesReceived(series as ASeries)</SourceLine>
-   <SourceLine>System.DebugLog("\tStudy :" + series.StudyUID.Value + " Series :" + series.SeriesUID.Value)</SourceLine>
+   <SourceLine>System.DebugLog("      Study :" + series.StudyInstanceUID.Value + " Series :" + series.SeriesInstanceUID.Value)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LeftSeries.Add(series)</SourceLine>
    <SourceLine></SourceLine>
@@ -648,26 +645,15 @@
    <SourceLine></SourceLine>
    <SourceLine>While LeftStudies.Count &gt; 0</SourceLine>
    <SourceLine>Var s As AStudy = LeftStudies(0)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// process in original order</SourceLine>
-   <SourceLine>//LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
-   <SourceLine>RightTree.LoadFromJSON(s.ToTreeNodeJson)</SourceLine>
-   <SourceLine>// remove the one you just processed</SourceLine>
+   <SourceLine>LeftTree.AddStudy(s)</SourceLine>
    <SourceLine>leftStudies.RemoveAt(0)</SourceLine>
    <SourceLine>Wend</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>While LeftSeries.Count &gt; 0</SourceLine>
    <SourceLine>Var s As ASeries = LeftSeries(0)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// process in original order</SourceLine>
-   <SourceLine>//LeftTree.AddJsonNode(s.ToTreeNodeJson)</SourceLine>
-   <SourceLine>RightTree.LoadFromJSON(s.ToTreeNodeJson)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// remove the one you just processed</SourceLine>
+   <SourceLine>LeftTree.AddSeries(s)</SourceLine>
    <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
    <SourceLine>Wend</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LeftTree.Refresh</SourceLine>
    <SourceLine></SourceLine>
@@ -680,6 +666,36 @@
   <ItemParams></ItemParams>
   <ItemResult></ItemResult>
  </Method>
+ <Property>
+  <ItemName>LeftRoot</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1862959103</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>LeftRoot As ModelSync.DicomNode</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>LeftRoot As ModelSync.DicomNode</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>rightRoot</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1077407743</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>rightRoot As ModelSync.DicomNode</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>rightRoot As ModelSync.DicomNode</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
  <Property>
   <ItemName>StudyRequests(-1)</ItemName>
   <Compatibility></Compatibility>
@@ -1033,16 +1049,6 @@
   <ItemDef><Hex bytes="1330">7B0A202022504143535F41223A207B0A202020202250303031223A207B0A2020202020202261747472696275746573223A207B0A20202020202020202250617469656E744944223A202250303031222C0A20202020202020202250617469656E744E616D65223A2022444F455E4A4F484E222C0A2020202020202020224E756D6265724F6650617469656E7452656C6174656453747564696573223A20322C0A2020202020202020224E756D6265724F6650617469656E7452656C61746564536572696573223A20332C0A2020202020202020224E756D6265724F6650617469656E7452656C61746564496E7374616E636573223A20350A2020202020207D2C0A20202020202022312E322E332E342E313030223A207B0A20202020202020202261747472696275746573223A207B0A20202020202020202020225374756479496E7374616E6365554944223A2022312E322E332E342E313030222C0A2020202020202020202022537475647944617465223A20223230323430313031222C0A202020202020202020202253747564794465736372697074696F6E223A2022427261696E204D5249222C0A20202020202020202020224D6F64616C6974696573496E5374756479223A205B224D52225D2C0A20202020202020202020224E756D6265724F66537475647952656C61746564536572696573223A20322C0A20202020202020202020224E756D6265724F66537475647952656C61746564496E7374616E636573223A20330A20202020202020207D2C0A202020202020202022312E322E332E342E3130302E31223A207B0A202020202020202020202261747472696275746573223A207B0A20202020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E3130302E31222C0A202020202020202020202020225365726965734E756D626572223A20312C0A202020202020202020202020224D6F64616C697479223A20224D52222C0A202020202020202020202020225365726965734465736372697074696F6E223A2022543120534147222C0A20202020202020202020202022534F50436C617373554944223A2022312E322E3834302E31303030382E352E312E342E312E312E34222C0A202020202020202020202020224E756D6265724F6653657269657352656C61746564496E7374616E636573223A20320A202020202020202020207D2C0A2020202020202020202022312E322E332E342E3130302E312E31223A207B0A2020202020202020202020202261747472696275746573223A207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E31222C0A202020202020202020202020202022496E7374616E63654E756D626572223A20312C0A2020202020202020202020202020224E756D6265724F664672616D6573223A20310A2020202020202020202020207D0A202020202020202020207D2C0A2020202020202020202022312E322E332E342E3130302E312E32223A207B0A2020202020202020202020202261747472696275746573223A207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E32222C0A202020202020202020202020202022496E7374616E63654E756D626572223A20322C0A2020202020202020202020202020224E756D6265724F664672616D6573223A20310A2020202020202020202020207D0A202020202020202020207D0A20202020202020207D0A2020202020207D0A202020207D0A20207D0A7D0A</Hex></ItemDef>
   <ItemFlags>33</ItemFlags>
  </Constant>
- <Constant>
-  <ItemName>SamplePatientStudyJSON1</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1850529791</PartID>
-  <TextEncoding>134217984</TextEncoding>
-  <ItemType>6</ItemType>
-  <ItemDef><Hex bytes="1330">7B0A202022504143535F42223A207B0A202020202250303031223A207B0A2020202020202261747472696275746573223A207B0A20202020202020202250617469656E744944223A202250303031222C0A20202020202020202250617469656E744E616D65223A2022444F455E4A4F484E222C0A2020202020202020224E756D6265724F6650617469656E7452656C6174656453747564696573223A20322C0A2020202020202020224E756D6265724F6650617469656E7452656C61746564536572696573223A20332C0A2020202020202020224E756D6265724F6650617469656E7452656C61746564496E7374616E636573223A20350A2020202020207D2C0A20202020202022312E322E332E342E313030223A207B0A20202020202020202261747472696275746573223A207B0A20202020202020202020225374756479496E7374616E6365554944223A2022312E322E332E342E313030222C0A2020202020202020202022537475647944617465223A20223230323430313031222C0A202020202020202020202253747564794465736372697074696F6E223A2022427261696E204D5249222C0A20202020202020202020224D6F64616C6974696573496E5374756479223A205B224D52225D2C0A20202020202020202020224E756D6265724F66537475647952656C61746564536572696573223A20322C0A20202020202020202020224E756D6265724F66537475647952656C61746564496E7374616E636573223A20330A20202020202020207D2C0A202020202020202022312E322E332E342E3130302E31223A207B0A202020202020202020202261747472696275746573223A207B0A20202020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E3130302E31222C0A202020202020202020202020225365726965734E756D626572223A20312C0A202020202020202020202020224D6F64616C697479223A20224D52222C0A202020202020202020202020225365726965734465736372697074696F6E223A2022543120534147222C0A20202020202020202020202022534F50436C617373554944223A2022312E322E3834302E31303030382E352E312E342E312E312E34222C0A202020202020202020202020224E756D6265724F6653657269657352656C61746564496E7374616E636573223A20320A202020202020202020207D2C0A2020202020202020202022312E322E332E342E3130302E312E31223A207B0A2020202020202020202020202261747472696275746573223A207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E31222C0A202020202020202020202020202022496E7374616E63654E756D626572223A20312C0A2020202020202020202020202020224E756D6265724F664672616D6573223A20310A2020202020202020202020207D0A202020202020202020207D2C0A2020202020202020202022312E322E332E342E3130302E312E32223A207B0A2020202020202020202020202261747472696275746573223A207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E32222C0A202020202020202020202020202022496E7374616E63654E756D626572223A20322C0A2020202020202020202020202020224E756D6265724F664672616D6573223A20310A2020202020202020202020207D0A202020202020202020207D0A20202020202020207D0A2020202020207D0A202020207D0A20207D0A7D0A</Hex></ItemDef>
-  <ItemFlags>33</ItemFlags>
- </Constant>
  <Using>
   <ItemName>dcmtk</ItemName>
  </Using>
@@ -1215,33 +1221,33 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub SyncEvent()</SourceLine>
-    <SourceLine>'Var preferLeft As Boolean = True</SourceLine>
-    <SourceLine>'Var ops() As ModelSync.SyncOperation = ModelSync.DiffTrees(LeftRoot, RightRoot)</SourceLine>
-    <SourceLine>'</SourceLine>
-    <SourceLine>'Var dlg As New MessageDialog</SourceLine>
-    <SourceLine>'dlg.Title = "Planned sync operations"</SourceLine>
-    <SourceLine>'</SourceLine>
-    <SourceLine>'If ops.Count = 0 Then</SourceLine>
-    <SourceLine>'dlg.Message = "Trees are already in sync."</SourceLine>
-    <SourceLine>'Else</SourceLine>
-    <SourceLine>'Var sb As String</SourceLine>
-    <SourceLine>'For Each op As ModelSync.SyncOperation In ops</SourceLine>
-    <SourceLine>'sb = sb + op.ToDisplayString + EndOfLine</SourceLine>
-    <SourceLine>'Next</SourceLine>
-    <SourceLine>'dlg.Message = sb</SourceLine>
-    <SourceLine>'End If</SourceLine>
-    <SourceLine>'</SourceLine>
-    <SourceLine>'Var result As MessageDialogButton = dlg.ShowModal</SourceLine>
+    <SourceLine>Var preferLeft As Boolean = True</SourceLine>
+    <SourceLine>Var ops() As ModelSync.SyncOperation = ModelSync.DiffTrees(LeftRoot, RightRoot)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>Var dlg As New MessageDialog</SourceLine>
+    <SourceLine>dlg.Title = "Planned sync operations"</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>If ops.Count = 0 Then</SourceLine>
+    <SourceLine>dlg.Message = "Trees are already in sync."</SourceLine>
+    <SourceLine>Else</SourceLine>
+    <SourceLine>Var sb As String</SourceLine>
+    <SourceLine>For Each op As ModelSync.SyncOperation In ops</SourceLine>
+    <SourceLine>sb = sb + op.ToDisplayString + EndOfLine</SourceLine>
+    <SourceLine>Next</SourceLine>
+    <SourceLine>dlg.Message = sb</SourceLine>
+    <SourceLine>End If</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>Var result As MessageDialogButton = dlg.ShowModal</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
   </HookInstance>
  </ControlBehavior>
  <ControlBehavior>
-  <Superclass>DesktopTreeViewCtrl</Superclass>
+  <Superclass>DicomTreeViewCtrl</Superclass>
  </ControlBehavior>
  <ControlBehavior>
-  <Superclass>DesktopTreeViewCtrl</Superclass>
+  <Superclass>DicomTreeViewCtrl</Superclass>
  </ControlBehavior>
  <Control>
   <ControlClass>AEEndpointView</ControlClass>
@@ -1407,18 +1413,18 @@
   <PartID>983382015</PartID>
  </Control>
  <Control>
-  <ControlClass>DesktopTreeViewCtrl</ControlClass>
-  <ItemName>DesktopTreeViewCtrl</ItemName>
+  <ControlClass>DicomTreeViewCtrl</ControlClass>
+  <ItemName>DicomTreeViewCtrl</ItemName>
   <PropertyVal Name="AllowAutoDeactivate">True</PropertyVal>
   <PropertyVal Name="AllowFocus">False</PropertyVal>
-  <PropertyVal Name="AllowFocusRing">True</PropertyVal>
+  <PropertyVal Name="AllowFocusRing">False</PropertyVal>
   <PropertyVal Name="AllowTabs">True</PropertyVal>
   <PropertyVal Name="Backdrop">0</PropertyVal>
   <PropertyVal Name="BackgroundColor">&amp;hFFFFFF</PropertyVal>
   <PropertyVal Name="Composited">False</PropertyVal>
   <PropertyVal Name="Enabled">True</PropertyVal>
   <PropertyVal Name="HasBackgroundColor">False</PropertyVal>
-  <PropertyVal Name="Height">508</PropertyVal>
+  <PropertyVal Name="Height">513</PropertyVal>
   <PropertyVal Name="Index">-2147483648</PropertyVal>
   <PropertyVal Name="InitialParent"></PropertyVal>
   <PropertyVal Name="Left">20</PropertyVal>
@@ -1427,9 +1433,9 @@
   <PropertyVal Name="LockRight">False</PropertyVal>
   <PropertyVal Name="LockTop">True</PropertyVal>
   <PropertyVal Name="Name">LeftTree</PropertyVal>
-  <PropertyVal Name="Scope">1</PropertyVal>
-  <PropertyVal Name="Super">DesktopTreeViewCtrl</PropertyVal>
-  <PropertyVal Name="TabIndex">8</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">DicomTreeViewCtrl</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
   <PropertyVal Name="TabPanelIndex">0</PropertyVal>
   <PropertyVal Name="TabStop">True</PropertyVal>
   <PropertyVal Name="Tooltip"></PropertyVal>
@@ -1442,8 +1448,8 @@
   <PartID>2134433791</PartID>
  </Control>
  <Control>
-  <ControlClass>DesktopTreeViewCtrl</ControlClass>
-  <ItemName>DesktopTreeViewCtrl</ItemName>
+  <ControlClass>DicomTreeViewCtrl</ControlClass>
+  <ItemName>DicomTreeViewCtrl</ItemName>
   <PropertyVal Name="AllowAutoDeactivate">True</PropertyVal>
   <PropertyVal Name="AllowFocus">False</PropertyVal>
   <PropertyVal Name="AllowFocusRing">False</PropertyVal>
@@ -1463,7 +1469,7 @@
   <PropertyVal Name="LockTop">True</PropertyVal>
   <PropertyVal Name="Name">RightTree</PropertyVal>
   <PropertyVal Name="Scope">2</PropertyVal>
-  <PropertyVal Name="Super">DesktopTreeViewCtrl</PropertyVal>
+  <PropertyVal Name="Super">DicomTreeViewCtrl</PropertyVal>
   <PropertyVal Name="TabIndex">9</PropertyVal>
   <PropertyVal Name="TabPanelIndex">0</PropertyVal>
   <PropertyVal Name="TabStop">True</PropertyVal>
@@ -1692,6 +1698,956 @@
  <ObjName>Build</ObjName>
  <ObjContainerID>625960959</ObjContainerID>
 </block>
+<block type="Module" ID="224845823">
+ <ObjName>ModelSync</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>0</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>LoadDicomTreeFromJSON</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>874643455</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function LoadDicomTreeFromJSON(jsonText As String) As DicomNode</SourceLine>
+   <SourceLine>If jsonText.Trim = "" Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var v As Variant</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Try</SourceLine>
+   <SourceLine>v = ParseJSON(jsonText)</SourceLine>
+   <SourceLine>Catch e As JSONException</SourceLine>
+   <SourceLine>MessageBox("Failed to parse JSON: " + e.Message)</SourceLine>
+   <SourceLine>Return Nil</SourceLine>
+   <SourceLine>End Try</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If Not (v IsA Dictionary) Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var rootDict As Dictionary = Dictionary(v)</SourceLine>
+   <SourceLine>Return PatientFromDict(rootDict)   ' &lt;-- NEW, not NodeFromDict</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>jsonText As String</ItemParams>
+  <ItemResult>DicomNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>NodeFromDict</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1167339519</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function NodeFromDict(d As Dictionary) As DicomNode</SourceLine>
+   <SourceLine>If d Is Nil Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>// Determine node type from "NodeType" string</SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>Var kindName As String = d.Lookup("NodeType", "Patient")</SourceLine>
+   <SourceLine>Var kind As NodeKind</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Select Case kindName</SourceLine>
+   <SourceLine>Case "Patient"</SourceLine>
+   <SourceLine>kind = NodeKind.Patient</SourceLine>
+   <SourceLine>Case "Study"</SourceLine>
+   <SourceLine>kind = NodeKind.Study</SourceLine>
+   <SourceLine>Case "Series"</SourceLine>
+   <SourceLine>kind = NodeKind.Series</SourceLine>
+   <SourceLine>Case "Instance"</SourceLine>
+   <SourceLine>kind = NodeKind.Instance</SourceLine>
+   <SourceLine>Case "Frame"</SourceLine>
+   <SourceLine>kind = NodeKind.Frame</SourceLine>
+   <SourceLine>Else</SourceLine>
+   <SourceLine>kind = NodeKind.Instance</SourceLine>
+   <SourceLine>End Select</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>// Build this node</SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>Var uid As String  = d.Lookup("UID", "")</SourceLine>
+   <SourceLine>Var desc As String = d.Lookup("Description", "")</SourceLine>
+   <SourceLine>Var n As New DicomNode(kind, uid, desc)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>// Process children</SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>If d.HasKey("Children") Then</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var rawChildren As Variant = d.Value("Children")</SourceLine>
+   <SourceLine>Var children() As Variant  // this will hold the array</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// Attempt to cast the Variant to an array</SourceLine>
+   <SourceLine>Try</SourceLine>
+   <SourceLine>children = rawChildren  // Raises exception if not an array</SourceLine>
+   <SourceLine>Catch e As RuntimeException</SourceLine>
+   <SourceLine>Return n  // No valid children; return the node as-is</SourceLine>
+   <SourceLine>End Try</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// Iterate each child Variant</SourceLine>
+   <SourceLine>For Each cv As Variant In children</SourceLine>
+   <SourceLine>If cv IsA Dictionary Then</SourceLine>
+   <SourceLine>Var childDict As Dictionary = Dictionary(cv)</SourceLine>
+   <SourceLine>Var childNode As DicomNode = NodeFromDict(childDict)</SourceLine>
+   <SourceLine>If childNode &lt;&gt; Nil Then</SourceLine>
+   <SourceLine>n.AddChild(childNode)</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return n</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As Dictionary</ItemParams>
+  <ItemResult>DicomNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>DiffTrees</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1689829375</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function DiffTrees(leftRoot As DicomNode, rightRoot As DicomNode) As SyncOperation()</SourceLine>
+   <SourceLine>Var ops() As SyncOperation</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If leftRoot Is Nil And rightRoot Is Nil Then Return ops</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var rootPath As String = "/"</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If leftRoot Is Nil Then</SourceLine>
+   <SourceLine>AddSubtreeOps(rightRoot, False, rootPath, ops)</SourceLine>
+   <SourceLine>Return ops</SourceLine>
+   <SourceLine>ElseIf rightRoot Is Nil Then</SourceLine>
+   <SourceLine>AddSubtreeOps(leftRoot, True, rootPath, ops)</SourceLine>
+   <SourceLine>Return ops</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>DiffNode(leftRoot, rightRoot, rootPath, ops)</SourceLine>
+   <SourceLine>Return ops</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>leftRoot As DicomNode, rightRoot As DicomNode</ItemParams>
+  <ItemResult>SyncOperation()</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>AddSubtreeOps</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>2048542719</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub AddSubtreeOps(node As DicomNode, sourceIsLeft As Boolean, basePath As String, ByRef ops() As SyncOperation)</SourceLine>
+   <SourceLine>If node Is Nil Then Return</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var currentPath As String = basePath + NodePathComponent(node)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var act As SyncAction</SourceLine>
+   <SourceLine>If sourceIsLeft Then</SourceLine>
+   <SourceLine>act = SyncAction.CopyFromLeftToRight</SourceLine>
+   <SourceLine>Else</SourceLine>
+   <SourceLine>act = SyncAction.CopyFromRightToLeft</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>ops.Add(New SyncOperation(act, currentPath, sourceIsLeft))</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>For Each child As DicomNode In node.Children</SourceLine>
+   <SourceLine>AddSubtreeOps(child, sourceIsLeft, currentPath, ops)</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>node As DicomNode, sourceIsLeft As Boolean, basePath As String, ByRef ops() As SyncOperation</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>DiffNode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1184940031</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub DiffNode(leftNode As DicomNode, rightNode As DicomNode, basePath As String, ByRef ops() As SyncOperation)</SourceLine>
+   <SourceLine>Var currentPath As String = basePath + NodePathComponent(leftNode)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Map right children by UID</SourceLine>
+   <SourceLine>Var rightMap As New Dictionary</SourceLine>
+   <SourceLine>For Each rc As DicomNode In rightNode.Children</SourceLine>
+   <SourceLine>rightMap.Value(rc.UID) = rc</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Left side children</SourceLine>
+   <SourceLine>For Each lc As DicomNode In leftNode.Children</SourceLine>
+   <SourceLine>If rightMap.HasKey(lc.UID) Then</SourceLine>
+   <SourceLine>Var rc As DicomNode = DicomNode(rightMap.Value(lc.UID))</SourceLine>
+   <SourceLine>DiffNode(lc, rc, currentPath, ops)</SourceLine>
+   <SourceLine>rightMap.Remove(lc.UID)</SourceLine>
+   <SourceLine>Else</SourceLine>
+   <SourceLine>ops.Add(New SyncOperation(SyncAction.CopyFromLeftToRight, _</SourceLine>
+   <SourceLine>currentPath + "/" + NodePathComponent(lc), True))</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Remaining right-only children</SourceLine>
+   <SourceLine>For Each key As Variant In rightMap.Keys</SourceLine>
+   <SourceLine>Var rc As DicomNode = DicomNode(rightMap.Value(key))</SourceLine>
+   <SourceLine>ops.Add(New SyncOperation(SyncAction.CopyFromRightToLeft, _</SourceLine>
+   <SourceLine>currentPath + "/" + NodePathComponent(rc), False))</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>leftNode As DicomNode, rightNode As DicomNode, basePath As String, ByRef ops() As SyncOperation</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>NodePathComponent</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>2083551231</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function NodePathComponent(node As DicomNode) As String</SourceLine>
+   <SourceLine>If node Is Nil Then Return ""</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var prefix As String</SourceLine>
+   <SourceLine>Select Case node.NodeType</SourceLine>
+   <SourceLine>Case NodeKind.Patient</SourceLine>
+   <SourceLine>prefix = "PAT"</SourceLine>
+   <SourceLine>Case NodeKind.Study</SourceLine>
+   <SourceLine>prefix = "STU"</SourceLine>
+   <SourceLine>Case NodeKind.Series</SourceLine>
+   <SourceLine>prefix = "SER"</SourceLine>
+   <SourceLine>Case NodeKind.Instance</SourceLine>
+   <SourceLine>prefix = "INS"</SourceLine>
+   <SourceLine>Case NodeKind.Frame</SourceLine>
+   <SourceLine>prefix = "FRM"</SourceLine>
+   <SourceLine>End Select</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return prefix + "[" + node.UID + "]"</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>node As DicomNode</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>PatientFromDict</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1771108351</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function PatientFromDict(d As Dictionary) As DicomNode</SourceLine>
+   <SourceLine>If d Is Nil Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var patientID   As String = d.Lookup("PatientID", "")</SourceLine>
+   <SourceLine>Var patientName As String = d.Lookup("PatientName", "")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Patient node just says "Patient"</SourceLine>
+   <SourceLine>Var patientNode As New DicomNode(NodeKind.Patient, "", "")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Child nodes for ID and Name</SourceLine>
+   <SourceLine>Var idNode   As New DicomNode(NodeKind.Attribute, patientID, "ID")</SourceLine>
+   <SourceLine>Var nameNode As New DicomNode(NodeKind.Attribute, patientName, "Name")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>patientNode.AddChild(idNode)</SourceLine>
+   <SourceLine>patientNode.AddChild(nameNode)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Then add Study nodes as children as well</SourceLine>
+   <SourceLine>Var studiesVar As Variant = d.Lookup("Studies", Nil)</SourceLine>
+   <SourceLine>If studiesVar.IsArray Then</SourceLine>
+   <SourceLine>Var studies() As Variant = studiesVar</SourceLine>
+   <SourceLine>For Each sv As Variant In studies</SourceLine>
+   <SourceLine>If sv IsA Dictionary Then</SourceLine>
+   <SourceLine>Var studyNode As DicomNode = StudyFromDict(Dictionary(sv))</SourceLine>
+   <SourceLine>If studyNode &lt;&gt; Nil Then patientNode.AddChild(studyNode)</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return patientNode</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As Dictionary</ItemParams>
+  <ItemResult>DicomNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>StudyFromDict</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1871599615</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function StudyFromDict(d As Dictionary) As DicomNode</SourceLine>
+   <SourceLine>If d Is Nil Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var uid  As String = d.Lookup("StudyInstanceUID", "")</SourceLine>
+   <SourceLine>Var desc As String = d.Lookup("StudyDescription", "")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var studyNode As New DicomNode(NodeKind.Study, uid, desc)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var seriesVar As Variant = d.Lookup("Series", Nil)</SourceLine>
+   <SourceLine>If seriesVar.IsArray Then</SourceLine>
+   <SourceLine>Var seriesArray() As Variant = seriesVar</SourceLine>
+   <SourceLine>For Each sv As Variant In seriesArray</SourceLine>
+   <SourceLine>If sv IsA Dictionary Then</SourceLine>
+   <SourceLine>Var seriesNode As DicomNode = SeriesFromDict(Dictionary(sv))</SourceLine>
+   <SourceLine>If seriesNode &lt;&gt; Nil Then studyNode.AddChild(seriesNode)</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return studyNode</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As Dictionary</ItemParams>
+  <ItemResult>DicomNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>SeriesFromDict</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1895770111</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function SeriesFromDict(d As Dictionary) As DicomNode</SourceLine>
+   <SourceLine>If d Is Nil Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var uid  As String = d.Lookup("SeriesInstanceUID", "")</SourceLine>
+   <SourceLine>Var desc As String = d.Lookup("SeriesDescription", "")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var seriesNode As New DicomNode(NodeKind.Series, uid, desc)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var instVar As Variant = d.Lookup("Instances", Nil)</SourceLine>
+   <SourceLine>If instVar.IsArray Then</SourceLine>
+   <SourceLine>Var instArray() As Variant = instVar</SourceLine>
+   <SourceLine>For Each iv As Variant In instArray</SourceLine>
+   <SourceLine>If iv IsA Dictionary Then</SourceLine>
+   <SourceLine>Var instNode As DicomNode = InstanceFromDict(Dictionary(iv))</SourceLine>
+   <SourceLine>If instNode &lt;&gt; Nil Then seriesNode.AddChild(instNode)</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return seriesNode</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As Dictionary</ItemParams>
+  <ItemResult>DicomNode</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>InstanceFromDict</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1955692543</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function InstanceFromDict(d As Dictionary) As DicomNode</SourceLine>
+   <SourceLine>If d Is Nil Then Return Nil</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var uid As String = d.Lookup("SOPInstanceUID", "")</SourceLine>
+   <SourceLine>Var instNode As New DicomNode(NodeKind.Instance, uid, "")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var framesVar As Variant = d.Lookup("Frames", Nil)</SourceLine>
+   <SourceLine>If framesVar.IsArray Then</SourceLine>
+   <SourceLine>Var framesArray() As Variant = framesVar</SourceLine>
+   <SourceLine>For Each fv As Variant In framesArray</SourceLine>
+   <SourceLine>Var frameUID As String = fv.StringValue   ' e.g. "1", "2", ...</SourceLine>
+   <SourceLine>Var frameNode As New DicomNode(NodeKind.Frame, frameUID, "")</SourceLine>
+   <SourceLine>instNode.AddChild(frameNode)</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Return instNode</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>d As Dictionary</ItemParams>
+  <ItemResult>DicomNode</ItemResult>
+ </Method>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
+ <Constant>
+  <ItemName>RIghtSampleJSON</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1334194175</PartID>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemType>0</ItemType>
+  <ItemDef><Hex bytes="828">7B0A20202250617469656E744944223A202250303031222C0A20202250617469656E744E616D65223A2022416C6963655E5E5E222C0A20202253747564696573223A205B0A202020207B0A202020202020225374756479496E7374616E6365554944223A2022312E322E332E342E313030222C0A2020202020202253747564794465736372697074696F6E223A202248656164204354202D2055504441544544222C0A20202020202022536572696573223A205B0A20202020202020207B0A2020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E3130302E31222C0A20202020202020202020225365726965734465736372697074696F6E223A2022417869616C202D2055504441544544222C0A2020202020202020202022496E7374616E636573223A205B0A2020202020202020202020207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E31222C0A2020202020202020202020202020224672616D6573223A205B312C325D0A2020202020202020202020207D2C0A2020202020202020202020207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E33222C0A2020202020202020202020202020224672616D6573223A205B315D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D2C0A20202020202020207B0A2020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E3130302E33222C0A20202020202020202020225365726965734465736372697074696F6E223A2022536167697474616C222C0A2020202020202020202022496E7374616E636573223A205B0A2020202020202020202020207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E332E31222C0A2020202020202020202020202020224672616D6573223A205B315D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D0A2020202020205D0A202020207D0A20205D0A7D</Hex></ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>LeftSampleJSON</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>657780735</PartID>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemType>0</ItemType>
+  <ItemDef><Hex bytes="809">7B0A20202250617469656E744944223A202250303031222C0A20202250617469656E744E616D65223A2022416C6963655E5E5E222C0A20202253747564696573223A205B0A202020207B0A202020202020225374756479496E7374616E6365554944223A2022312E322E332E342E313030222C0A2020202020202253747564794465736372697074696F6E223A202248656164204354222C0A20202020202022536572696573223A205B0A20202020202020207B0A2020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E3130302E31222C0A20202020202020202020225365726965734465736372697074696F6E223A2022417869616C222C0A2020202020202020202022496E7374616E636573223A205B0A2020202020202020202020207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E31222C0A2020202020202020202020202020224672616D6573223A205B312C322C335D0A2020202020202020202020207D2C0A2020202020202020202020207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E312E32222C0A2020202020202020202020202020224672616D6573223A205B315D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D2C0A20202020202020207B0A2020202020202020202022536572696573496E7374616E6365554944223A2022312E322E332E342E3130302E32222C0A20202020202020202020225365726965734465736372697074696F6E223A2022436F726F6E616C222C0A2020202020202020202022496E7374616E636573223A205B0A2020202020202020202020207B0A202020202020202020202020202022534F50496E7374616E6365554944223A2022312E322E332E342E3130302E322E31222C0A2020202020202020202020202020224672616D6573223A205B315D0A2020202020202020202020207D0A202020202020202020205D0A20202020202020207D0A2020202020205D0A202020207D0A20205D0A7D</Hex></ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Enumeration>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>0</ItemFlags>
+  <ItemType>Integer</ItemType>
+  <BinaryEnum>0</BinaryEnum>
+  <ItemName>NodeKind</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1510676479</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Patient</SourceLine>
+   <SourceLine>Study</SourceLine>
+   <SourceLine>Series</SourceLine>
+   <SourceLine>Frame</SourceLine>
+   <SourceLine>Instance</SourceLine>
+   <SourceLine>Attribute</SourceLine>
+  </ItemSource>
+ </Enumeration>
+ <Enumeration>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>0</ItemFlags>
+  <ItemType>Integer</ItemType>
+  <BinaryEnum>0</BinaryEnum>
+  <ItemName>SyncAction</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>849563647</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>CopyFromLeftToRight</SourceLine>
+   <SourceLine>CopyFromRightToLeft</SourceLine>
+  </ItemSource>
+ </Enumeration>
+</block>
+<block type="Module" ID="513921023">
+ <ObjName>DIcomNode</ObjName>
+ <ObjContainerID>224845823</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>165003263</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor(kind As NodeKind, uid As String, description As String)</SourceLine>
+   <SourceLine>Self.NodeType = kind</SourceLine>
+   <SourceLine>Self.UID = uid</SourceLine>
+   <SourceLine>Self.Description = description</SourceLine>
+   <SourceLine>Self.Attribs = New Dictionary</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>kind As NodeKind, uid As String, description As String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>AddChild</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>649912319</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub AddChild(child As DicomNode)</SourceLine>
+   <SourceLine>Children.Add(child)</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>child As DicomNode</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Property>
+  <ItemName>NodeType</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1725884415</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>NodeType As NodeKind</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>NodeType As NodeKind</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>UID</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>23353343</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>UID As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>UID As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Description</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>11790335</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Description As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Description As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Children(-1)</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1937315839</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Children(-1) As DicomNode</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Children(-1) As DicomNode</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Attribs</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>278038527</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Attribs As Dictionary</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Attribs As Dictionary</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>NodeType</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>NodeKind</ItemType>
+   <EditorType>Enum</EditorType>
+   <Enumeration>
+    <ItemDef>0 - Patient</ItemDef>
+    <ItemDef>1 - Study</ItemDef>
+    <ItemDef>2 - Series</ItemDef>
+    <ItemDef>3 - Frame</ItemDef>
+    <ItemDef>4 - Instance</ItemDef>
+    <ItemDef>5 - Attribute</ItemDef>
+   </Enumeration>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>UID</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Description</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+ </ViewBehavior>
+</block>
+<block type="Module" ID="1133770751">
+ <ObjName>AEEndpoint</ObjName>
+ <ObjContainerID>224845823</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Property>
+  <ItemName>AETitle</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>976914431</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>AETitle As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>AETitle As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Host</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>145195007</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Host As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Host As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Port</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1118728191</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Port As Integer</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Port As Integer</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>AETitle</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Host</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Port</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
+</block>
+<block type="Module" ID="669620223">
+ <ObjName>SyncOperation</ObjName>
+ <ObjContainerID>224845823</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1953763327</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor(action As SyncAction, path As String, sourceIsLeft As Boolean)</SourceLine>
+   <SourceLine>Self.Action = action</SourceLine>
+   <SourceLine>Self.Path = path</SourceLine>
+   <SourceLine>Self.SourceIsLeft = sourceIsLeft</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>action As SyncAction, path As String, sourceIsLeft As Boolean</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ToDisplayString</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>285079551</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ToDisplayString() As String</SourceLine>
+   <SourceLine>Select Case Action</SourceLine>
+   <SourceLine>Case SyncAction.CopyFromLeftToRight</SourceLine>
+   <SourceLine>Return "COPY Left → Right : " + Path</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Case SyncAction.CopyFromRightToLeft</SourceLine>
+   <SourceLine>Return "COPY Right → Left : " + Path</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//Case SyncAction.DeleteFromLeft</SourceLine>
+   <SourceLine>//Return "DELETE on Left : " + Path</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//Case SyncAction.DeleteFromRight</SourceLine>
+   <SourceLine>//Return "DELETE on Right : " + Path</SourceLine>
+   <SourceLine>End Select</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Property>
+  <ItemName>Action</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1827602431</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Action As SyncAction</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Action As SyncAction</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Path</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1478449151</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Path As String</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Path As String</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>SourceIsLeft</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1994039295</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>SourceIsLeft As Boolean</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>SourceIsLeft As Boolean</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Action</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>SyncAction</ItemType>
+   <EditorType>Enum</EditorType>
+   <Enumeration>
+    <ItemDef>0 - CopyFromLeftToRight</ItemDef>
+    <ItemDef>1 - CopyFromRightToLeft</ItemDef>
+   </Enumeration>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Path</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>SourceIsLeft</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
+</block>
 <block type="Module" ID="28317695">
  <ObjName>AQuery</ObjName>
  <ObjContainerID>1707980799</ObjContainerID>
@@ -1777,7 +2733,7 @@
    <SourceLine>'set called AE title of peer (default: ANY-SCP)</SourceLine>
    <SourceLine>'139.48.221.112 105 -aec CGETROUTER -aet PACSYNC</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>cmd = cmd + " -aet " + MyAET + " -aec " + QueryAET + " " + host + " " + str(port)</SourceLine>
+   <SourceLine>cmd = cmd +  " -aet " + MyAET + " -aec " + QueryAET + " " + host + " " + str(port)</SourceLine>
    <SourceLine>System.DebugLog("query built:" + cmd)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
@@ -2598,12 +3554,18 @@
    <SourceLine></SourceLine>
    <SourceLine>rightBracket = lines(i).InStr(")")</SourceLine>
    <SourceLine>leftBrace = lines(i).InStr("[")</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>if leftBrace = 0 then</SourceLine>
+   <SourceLine>leftBrace = lines(i).InStr("=")</SourceLine>
+   <SourceLine>end if</SourceLine>
    <SourceLine>if leftBrace &lt;&gt; 0 then</SourceLine>
    <SourceLine>rightBrace = lines(i).Instr("]")</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>if rightBrace = 0 then</SourceLine>
+   <SourceLine>rightBrace = lines(i).Instr("#")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>GrpID  = lines(i).Mid(leftBracket+1, rightBracket-leftBracket-1)</SourceLine>
-   <SourceLine>Value = lines(i).Mid(leftBrace+1, rightBrace-leftBrace-1)</SourceLine>
+   <SourceLine>Value = lines(i).Mid(leftBrace+1, rightBrace-leftBrace-1).Trim</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>// Make sure no null characters are inserted into the string.</SourceLine>
    <SourceLine>Value = replaceAll(value, chr(0), "")</SourceLine>
@@ -3002,8 +3964,8 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub Constructor()</SourceLine>
-   <SourceLine>StudyUID = new DicomObjectBaseClass("Study Instance UID", "0020,000D", "", false)</SourceLine>
-   <SourceLine>SeriesUID = new DicomObjectBaseClass("Series Instance UID", "0020,000E", "", false)</SourceLine>
+   <SourceLine>StudyInstanceUID = new DicomObjectBaseClass("Study Instance UID", "0020,000D", "", false)</SourceLine>
+   <SourceLine>SeriesInstanceUID = new DicomObjectBaseClass("Series Instance UID", "0020,000E", "", false)</SourceLine>
    <SourceLine>Modality = new DicomObjectBaseClass("Modality", "0008,0060")</SourceLine>
    <SourceLine>NumberOfImages = new DicomObjectBaseClass("# Images", "0020,1209")</SourceLine>
    <SourceLine>SeriesDate = new DicomObjectBaseClass("Date", "0008,0021")</SourceLine>
@@ -3011,8 +3973,6 @@
    <SourceLine>SeriesNumber = new DicomObjectBaseClass("Series Number", "0020,0011")</SourceLine>
    <SourceLine>SeriesTime = new DicomObjectBaseClass("Time", "0008,0031")</SourceLine>
    <SourceLine>SOPClassUID = new DicomObjectBaseClass("SOP Class UID", "0008,0016")</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -3031,8 +3991,8 @@
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Function QueryFindKeyValues() As Dictionary</SourceLine>
    <SourceLine>dim d as new Dictionary</SourceLine>
-   <SourceLine>d.Value("0020,000D") = StudyUID.Value</SourceLine>
-   <SourceLine>d.Value("0020,000E") = SeriesUID.Value</SourceLine>
+   <SourceLine>d.Value("0020,000D") = StudyInstanceUID.Value</SourceLine>
+   <SourceLine>d.Value("0020,000E") = SeriesInstanceUID.Value</SourceLine>
    <SourceLine>return d</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Function</SourceLine>
@@ -3076,21 +4036,27 @@
    <SourceLine>Function ToTreeNodeJson() As String</SourceLine>
    <SourceLine>Var d As New Dictionary</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>Var studyUID As String = SafeValue(StudyUID)</SourceLine>
-   <SourceLine>Var seriesUID As String = SafeValue(SeriesUID)</SourceLine>
+   <SourceLine>Var studyInstanceUID As String = SafeValue(StudyInstanceUID)</SourceLine>
+   <SourceLine>Var seriesInstanceUID As String = SafeValue(SeriesInstanceUID)</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>d.Value("id") = "SERIES:" + seriesUID</SourceLine>
-   <SourceLine>d.Value("parentId") = "STUDY:" + studyUID</SourceLine>
+   <SourceLine>If studyInstanceUID = "" Or seriesInstanceUID = "" Then Return ""</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Aligned ID scheme</SourceLine>
+   <SourceLine>d.Value("id") = "R|" + seriesInstanceUID</SourceLine>
+   <SourceLine>d.Value("parentId") = "S|" + studyInstanceUID</SourceLine>
    <SourceLine>d.Value("type") = "series"</SourceLine>
-   <SourceLine>d.Value("caption") = BuildCaption()</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>Var payload As New Dictionary</SourceLine>
-   <SourceLine>payload.Value("StudyUID") = studyUID</SourceLine>
-   <SourceLine>payload.Value("SeriesUID") = seriesUID</SourceLine>
-   <SourceLine>payload.Value("SeriesNumber") = SafeValue(SeriesNumber)</SourceLine>
+   <SourceLine>payload.Value("StudyInstanceUID") = studyInstanceUID</SourceLine>
+   <SourceLine>payload.Value("SeriesInstanceUID") = seriesInstanceUID</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>payload.Value("Modality") = SafeValue(Modality)</SourceLine>
-   <SourceLine>payload.Value("SeriesDescription") = SafeValue(SeriesDescription)</SourceLine>
    <SourceLine>payload.Value("NumberOfImages") = SafeValue(NumberOfImages)</SourceLine>
+   <SourceLine>payload.Value("SeriesDate") = SafeValue(SeriesDate)</SourceLine>
+   <SourceLine>payload.Value("SeriesDescription") = SafeValue(SeriesDescription)</SourceLine>
+   <SourceLine>payload.Value("SeriesNumber") = SafeValue(SeriesNumber)</SourceLine>
+   <SourceLine>payload.Value("SeriesTime") = SafeValue(SeriesTime)</SourceLine>
+   <SourceLine>payload.Value("SOPClassUID") = SafeValue(SOPClassUID)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>d.Value("data") = payload</SourceLine>
    <SourceLine></SourceLine>
@@ -3100,36 +4066,6 @@
   <TextEncoding>134217984</TextEncoding>
   <AliasName></AliasName>
   <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams></ItemParams>
-  <ItemResult>String</ItemResult>
- </Method>
- <Method>
-  <ItemName>BuildCaption</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1749981183</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function BuildCaption() As String</SourceLine>
-   <SourceLine>Var parts() As String</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>Var num As String = SafeValue(SeriesNumber)</SourceLine>
-   <SourceLine>Var moda As String = SafeValue(Modality)</SourceLine>
-   <SourceLine>Var desc As String = SafeValue(SeriesDescription)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If num &lt;&gt; "" Then parts.Add("Series " + num)</SourceLine>
-   <SourceLine>If moda &lt;&gt; "" Then parts.Add(moda)</SourceLine>
-   <SourceLine>If desc &lt;&gt; "" Then parts.Add(desc)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If parts.Count = 0 Then parts.Add("Series")</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>Return String.FromArray(parts, "  |  ")</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>33</ItemFlags>
   <IsShared>0</IsShared>
   <ItemParams></ItemParams>
   <ItemResult>String</ItemResult>
@@ -3244,32 +4180,32 @@
   <IsShared>0</IsShared>
  </Property>
  <Property>
-  <ItemName>SeriesUID</ItemName>
+  <ItemName>SeriesInstanceUID</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>460922879</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>SeriesUID As DicomObjectBaseClass</SourceLine>
+   <SourceLine>SeriesInstanceUID As DicomObjectBaseClass</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>SeriesUID As DicomObjectBaseClass</ItemDeclaration>
+  <ItemDeclaration>SeriesInstanceUID As DicomObjectBaseClass</ItemDeclaration>
   <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
  <Property>
-  <ItemName>StudyUID</ItemName>
+  <ItemName>StudyInstanceUID</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>30613503</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>StudyUID As DicomObjectBaseClass</SourceLine>
+   <SourceLine>StudyInstanceUID As DicomObjectBaseClass</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>StudyUID As DicomObjectBaseClass</ItemDeclaration>
+  <ItemDeclaration>StudyInstanceUID As DicomObjectBaseClass</ItemDeclaration>
   <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
@@ -3285,7 +4221,7 @@
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
   <ItemDeclaration>SOPClassUID As DicomObjectBaseClass</ItemDeclaration>
-  <ItemFlags>33</ItemFlags>
+  <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
  <ViewBehavior>
@@ -3587,158 +4523,6 @@
   </ViewProperty>
  </ViewBehavior>
 </block>
-<block type="Module" ID="140763184">
- <ObjName>Extensions</ObjName>
- <ObjContainerID>0</ObjContainerID>
- <IsClass>0</IsClass>
- <ItemFlags>1</ItemFlags>
- <IsInterface>0</IsInterface>
- <Compatibility></Compatibility>
- <Method>
-  <ItemName>AppendArray</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>571762687</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Sub AppendArray(Extends dest() as string, source() as string)</SourceLine>
-   <SourceLine>For i as integer = 0 to source.Ubound</SourceLine>
-   <SourceLine>dest.Append source( i )</SourceLine>
-   <SourceLine>Next i</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>End Sub</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams>Extends dest() as string, source() as string</ItemParams>
-  <ItemResult></ItemResult>
- </Method>
- <Method>
-  <ItemName>FindLast</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1550956543</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function FindLast(extends s as String, c as String) As Integer</SourceLine>
-   <SourceLine>return len(s) - len(NthField(s, c, CountFields(s, c)))</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams>extends s as String, c as String</ItemParams>
-  <ItemResult>Integer</ItemResult>
- </Method>
- <Method>
-  <ItemName>Parse_dcmtk_Results</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>1966979071</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function Parse_dcmtk_Results(Results as string) As Dictionary()</SourceLine>
-   <SourceLine>dim DArray(-1) as Dictionary</SourceLine>
-   <SourceLine>dim dic as new Dictionary</SourceLine>
-   <SourceLine>dim lines() as String</SourceLine>
-   <SourceLine>dim GrpID, Value as string</SourceLine>
-   <SourceLine>dim leftBracket, rightBracket, leftBrace, rightBrace as integer</SourceLine>
-   <SourceLine>dim i as integer</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>lines = Results.Split(Chr(10))</SourceLine>
-   <SourceLine>if lines.Ubound &gt; 0 then</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if lines(0).left(2) = "E:" then</SourceLine>
-   <SourceLine>System.DebugLog("There was a dcmtk error. " + lines(0))</SourceLine>
-   <SourceLine>return nil</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>for i=0 to lines.Ubound</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>leftBracket = lines(i).InStr("(")</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if leftBracket &lt;&gt; 0 then</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>rightBracket = lines(i).InStr(")")</SourceLine>
-   <SourceLine>leftBrace = lines(i).InStr("[")</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if leftBrace &lt;&gt; 0 then</SourceLine>
-   <SourceLine>rightBrace = lines(i).Instr("]")</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>GrpID  = lines(i).Mid(leftBracket+1, rightBracket-leftBracket-1)</SourceLine>
-   <SourceLine>Value = lines(i).Mid(leftBrace+1, rightBrace-leftBrace-1)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>// Make sure no null characters are inserted into the string.</SourceLine>
-   <SourceLine>Value = replaceAll(value, chr(0), "")</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>if dic.HasKey(GrpID) then</SourceLine>
-   <SourceLine>DArray.Append(dic)</SourceLine>
-   <SourceLine>dic = new Dictionary</SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>dic.Value(GrpID)=Value</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>next</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>DArray.Append(dic)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>end if</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>return DArray</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams>Results as string</ItemParams>
-  <ItemResult>Dictionary()</ItemResult>
- </Method>
- <ViewBehavior>
-  <ViewProperty>
-   <ObjName>Name</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Index</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <PropertyValue>-2147483648</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Super</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>ID</PropertyGroup>
-   <ItemType>String</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Left</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
-  <ViewProperty>
-   <ObjName>Top</ObjName>
-   <Visible>1</Visible>
-   <PropertyGroup>Position</PropertyGroup>
-   <PropertyValue>0</PropertyValue>
-   <ItemType>Integer</ItemType>
-  </ViewProperty>
- </ViewBehavior>
-</block>
 <block type="Module" ID="744398940">
  <ObjName>AStudy</ObjName>
  <ObjContainerID>0</ObjContainerID>
@@ -3763,7 +4547,10 @@
    <SourceLine>StudyDescription = new DicomObjectBaseClass("Study Description", "0008,1030")</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>PatientName = new DicomObjectBaseClass("Patient Name", "0010,0010")</SourceLine>
+   <SourceLine>PatientID = new DicomObjectBaseClass("Patient ID" , "0010,0020")</SourceLine>
+   <SourceLine>PatientBirthDate = new DicomObjectBaseClass("Patient Birth Data", "0010,0030")</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>PatientSex = new DicomObjectBaseClass("Patient Sex", "0010,0040")</SourceLine>
    <SourceLine>StudyInstanceUID = new DicomObjectBaseClass("Study Instance UID", "0020,000D", "", false)</SourceLine>
    <SourceLine>StudyID = new DicomObjectBaseClass("Study ID", "0020,0010")</SourceLine>
    <SourceLine></SourceLine>
@@ -3833,23 +4620,32 @@
    <SourceLine>Var d As New Dictionary</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>Var uid As String = SafeValue(StudyInstanceUID)</SourceLine>
+   <SourceLine>If uid = "" Then Return ""</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>d.Value("id") = "STUDY:" + uid</SourceLine>
+   <SourceLine>' NEW: stable root id format</SourceLine>
+   <SourceLine>d.Value("id") = "S|" + uid</SourceLine>
    <SourceLine>d.Value("type") = "study"</SourceLine>
-   <SourceLine>d.Value("caption") = BuildCaption()</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>' Optional payload (for selection, context menus, etc.)</SourceLine>
+   <SourceLine>' NEW: study is root</SourceLine>
+   <SourceLine>d.Value("parentId") = ""</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Payload (patient attrs live here now)</SourceLine>
    <SourceLine>Var payload As New Dictionary</SourceLine>
    <SourceLine>payload.Value("StudyInstanceUID") = uid</SourceLine>
    <SourceLine>payload.Value("AccessionNumber") = SafeValue(AccessionNumber)</SourceLine>
    <SourceLine>payload.Value("ModalitiesInStudy") = SafeValue(ModalitiesInStudy)</SourceLine>
    <SourceLine>payload.Value("NumberOfStudyRelatedSeries") = SafeValue(NumberOfStudyRelatedSeries)</SourceLine>
    <SourceLine>payload.Value("NumberOfStudyRelatedInstances") = SafeValue(NumberOfStudyRelatedInstances)</SourceLine>
-   <SourceLine>payload.Value("PatientName") = SafeValue(PatientName)</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>payload.Value("StudyDate") = SafeValue(StudyDate)</SourceLine>
+   <SourceLine>payload.Value("StudyTime") = SafeValue(StudyTime)</SourceLine>
    <SourceLine>payload.Value("StudyDescription") = SafeValue(StudyDescription)</SourceLine>
    <SourceLine>payload.Value("StudyID") = SafeValue(StudyID)</SourceLine>
-   <SourceLine>payload.Value("StudyTime") = SafeValue(StudyTime)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>payload.Value("PatientID") = SafeValue(PatientID)</SourceLine>
+   <SourceLine>payload.Value("PatientName") = SafeValue(PatientName)</SourceLine>
+   <SourceLine>payload.Value("PatientSex") = SafeValue(PatientSex)</SourceLine>
+   <SourceLine>payload.Value("PatientBirthDate") = SafeValue(PatientBirthDate) ' if you have it</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>d.Value("data") = payload</SourceLine>
    <SourceLine></SourceLine>
@@ -3859,36 +4655,6 @@
   <TextEncoding>134217984</TextEncoding>
   <AliasName></AliasName>
   <ItemFlags>0</ItemFlags>
-  <IsShared>0</IsShared>
-  <ItemParams></ItemParams>
-  <ItemResult>String</ItemResult>
- </Method>
- <Method>
-  <ItemName>BuildCaption</ItemName>
-  <Compatibility></Compatibility>
-  <Visible>1</Visible>
-  <PartID>595451903</PartID>
-  <ItemSource>
-   <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Function BuildCaption() As String</SourceLine>
-   <SourceLine>Var parts() As String</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>Var pn As String = SafeValue(PatientName)</SourceLine>
-   <SourceLine>Var dt As String = SafeValue(StudyDate)</SourceLine>
-   <SourceLine>Var desc As String = SafeValue(StudyDescription)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If pn &lt;&gt; "" Then parts.Add(pn)</SourceLine>
-   <SourceLine>If dt &lt;&gt; "" Then parts.Add(dt)</SourceLine>
-   <SourceLine>If desc &lt;&gt; "" Then parts.Add(desc)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>If parts.Count = 0 Then parts.Add("Study")</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>Return String.FromArray(parts, "  |  ")</SourceLine>
-   <SourceLine>End Function</SourceLine>
-  </ItemSource>
-  <TextEncoding>134217984</TextEncoding>
-  <AliasName></AliasName>
-  <ItemFlags>33</ItemFlags>
   <IsShared>0</IsShared>
   <ItemParams></ItemParams>
   <ItemResult>String</ItemResult>
@@ -4059,6 +4825,51 @@
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
   <ItemDeclaration>PatientName As DicomObjectBaseClass</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>PatientID</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>570783743</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>PatientID As DicomObjectBaseClass</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>PatientID As DicomObjectBaseClass</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>PatientBirthDate</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>2097745919</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>PatientBirthDate As DicomObjectBaseClass</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>PatientBirthDate As DicomObjectBaseClass</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>PatientSex</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1595291647</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>PatientSex As DicomObjectBaseClass</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>PatientSex As DicomObjectBaseClass</ItemDeclaration>
   <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
@@ -7423,7 +8234,408 @@
   <ColorDark>3A3A3A00</ColorDark>
  </ColorRepresentation>
 </block>
-<block type="ProjectItem" ID="1414344703">
+<block type="Module" ID="43126783">
+ <ObjName>DicomTreeViewCtrl</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>DesktopTreeViewCtrl</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>AddSeries</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1654915071</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub AddSeries(series as ASeries)</SourceLine>
+   <SourceLine>If series Is Nil Then Return</SourceLine>
+   <SourceLine>UpsertSeries_(series)</SourceLine>
+   <SourceLine>Refresh</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>series as ASeries</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>AddStudy</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>905797631</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub AddStudy(study as ASTudy)</SourceLine>
+   <SourceLine>If study Is Nil Then Return</SourceLine>
+   <SourceLine>UpsertStudy_(study)</SourceLine>
+   <SourceLine>Refresh</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>study as ASTudy</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1270417407</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor()</SourceLine>
+   <SourceLine>Super.Constructor</SourceLine>
+   <SourceLine>theTree = New Dictionary</SourceLine>
+   <SourceLine>theTree.Value("studies") = New Dictionary</SourceLine>
+   <SourceLine>theTree.Value("studyIndex") = New Dictionary</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>UpsertStudy_</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1939548159</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub UpsertStudy_(study As AStudy)</SourceLine>
+   <SourceLine>Var studies As Dictionary = Dictionary(theTree.Value("studies"))</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var studyKey As String = study.StudyInstanceUID.Value</SourceLine>
+   <SourceLine>If studyKey = "" Then Return</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Keep model copy</SourceLine>
+   <SourceLine>Var studyNode As Dictionary</SourceLine>
+   <SourceLine>If studies.HasKey(studyKey) Then</SourceLine>
+   <SourceLine>studyNode = Dictionary(studies.Value(studyKey))</SourceLine>
+   <SourceLine>Else</SourceLine>
+   <SourceLine>studyNode = New Dictionary</SourceLine>
+   <SourceLine>studyNode.Value("study") = study</SourceLine>
+   <SourceLine>studyNode.Value("series") = New Dictionary</SourceLine>
+   <SourceLine>studies.Value(studyKey) = studyNode</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Build JSON for TreeView</SourceLine>
+   <SourceLine>Var node As New Dictionary</SourceLine>
+   <SourceLine>node.Value("type") = "study"</SourceLine>
+   <SourceLine>node.Value("id") = "S|" + studyKey</SourceLine>
+   <SourceLine>node.Value("parentId") = ""   ' ROOT</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var data As New Dictionary</SourceLine>
+   <SourceLine>data.Value("StudyInstanceUID") = studyKey</SourceLine>
+   <SourceLine>data.Value("PatientID") = study.PatientID.Value</SourceLine>
+   <SourceLine>data.Value("PatientName") = study.PatientName.Value</SourceLine>
+   <SourceLine>data.Value("StudyDate") = study.StudyDate.Value</SourceLine>
+   <SourceLine>data.Value("StudyTime") = study.StudyTime.Value</SourceLine>
+   <SourceLine>data.Value("StudyDescription") = study.StudyDescription.Value</SourceLine>
+   <SourceLine>data.Value("AccessionNumber") = study.AccessionNumber.Value</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>data.Value("ModalitiesInStudy") = study.ModalitiesInStudy.Value</SourceLine>
+   <SourceLine>data.Value("NumberOfStudyRelatedSeries") = study.NumberOfStudyRelatedSeries.Value</SourceLine>
+   <SourceLine>data.Value("NumberOfStudyRelatedInstances") = study.NumberOfStudyRelatedInstances.Value</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>node.Value("data") = data</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' THIS is the correct call</SourceLine>
+   <SourceLine>LoadFromJSON(GenerateJSON(node))</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>study As AStudy</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>UpsertSeries_</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>636553215</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub UpsertSeries_(series as ASeries)</SourceLine>
+   <SourceLine>Var studies As Dictionary = Dictionary(theTree.Value("studies"))</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var studyKey As String  = series.StudyInstanceUID.Value</SourceLine>
+   <SourceLine>Var seriesKey As String = series.SeriesInstanceUID.Value</SourceLine>
+   <SourceLine>If studyKey = "" Or seriesKey = "" Then Return</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Must already have study</SourceLine>
+   <SourceLine>If Not studies.HasKey(studyKey) Then Return</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var studyNode As Dictionary = Dictionary(studies.Value(studyKey))</SourceLine>
+   <SourceLine>Var seriesDict As Dictionary = Dictionary(studyNode.Value("series"))</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>If Not seriesDict.HasKey(seriesKey) Then</SourceLine>
+   <SourceLine>seriesDict.Value(seriesKey) = series</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Build JSON for TreeView</SourceLine>
+   <SourceLine>Var node As New Dictionary</SourceLine>
+   <SourceLine>node.Value("type") = "series"</SourceLine>
+   <SourceLine>node.Value("id") = "R|" + seriesKey</SourceLine>
+   <SourceLine>node.Value("parentId") = "S|" + studyKey</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Var data As New Dictionary</SourceLine>
+   <SourceLine>data.Value("StudyInstanceUID") = studyKey</SourceLine>
+   <SourceLine>data.Value("SeriesInstanceUID") = seriesKey</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>data.Value("Modality") = series.Modality.Value</SourceLine>
+   <SourceLine>data.Value("NumberOfImages") = series.NumberOfImages.Value</SourceLine>
+   <SourceLine>data.Value("SeriesDate") = series.SeriesDate.Value</SourceLine>
+   <SourceLine>data.Value("SeriesDescription") = series.SeriesDescription.Value</SourceLine>
+   <SourceLine>data.Value("SeriesNumber") = series.SeriesNumber.Value</SourceLine>
+   <SourceLine>data.Value("SeriesTime") = series.SeriesTime.Value</SourceLine>
+   <SourceLine>data.Value("SOPClassUID") = series.SOPClassUID.Value</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>node.Value("data") = data</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>' Correct call</SourceLine>
+   <SourceLine>LoadFromJSON(GenerateJSON(node))</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>series as ASeries</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>DicomKey_</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>646952959</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function DicomKey_(s As String) As String</SourceLine>
+   <SourceLine>Return s</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>s As String</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Property>
+  <ItemName>theTree</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1339785215</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>theTree As Dictionary</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>theTree As Dictionary</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Width</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>300</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Height</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>300</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>InitialParent</ObjName>
+   <PropertyGroup>Position</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>LockLeft</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>LockTop</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>LockRight</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>LockBottom</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>TabIndex</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>TabPanelIndex</ObjName>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>TabStop</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>AllowAutoDeactivate</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Appearance</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Enabled</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Appearance</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Tooltip</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Appearance</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>AllowFocusRing</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Appearance</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Visible</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Appearance</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>BackgroundColor</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <PropertyValue>&amp;hFFFFFF</PropertyValue>
+   <ItemType>ColorGroup</ItemType>
+   <EditorType>ColorGroup</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Backdrop</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <ItemType>Picture</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>HasBackgroundColor</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>AllowFocus</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>AllowTabs</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Transparent</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Composited</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Window Behavior</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
 </block>
 <block type="UIState" ID="0">
  <WarningPreferences>
@@ -7443,25 +8655,18 @@
   <ItemData>0</ItemData>
  </WarningPreferences>
  <StudioWindowState>
-  <EditBounds><Rect left="221" top="133" width="1340" height="841"/></EditBounds>
+  <EditBounds><Rect left="432" top="115" width="2429" height="851"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
-   <EditorCount>2</EditorCount>
+   <EditorCount>1</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation></EditorLocation>
+    <EditorLocation>DicomTreeViewCtrl.UpsertSeries_</EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>2019475455</EditingPartID>
-    <EditorPath></EditorPath>
-   </Editor>
-   <Editor>
-    <EditorIndex>1</EditorIndex>
-    <EditorLocation>dcommander</EditorLocation>
-    <EditorPath></EditorPath>
-    <EditingPartID>1414344703</EditingPartID>
+    <EditingPartID>43126783</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
-   <SelectedTab>1</SelectedTab>
+   <SelectedTab>0</SelectedTab>
   </Editors>
  </StudioWindowState>
 </block>
