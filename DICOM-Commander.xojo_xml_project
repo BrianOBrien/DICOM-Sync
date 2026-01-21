@@ -6661,10 +6661,10 @@
    <SourceLine>LB.RemoveAllRows</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>Flatten(mRoot, 0)</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>For Each r As RowInfo In mRows</SourceLine>
-   <SourceLine>LB.AddRow("") // drawn manually later</SourceLine>
-   <SourceLine>Next</SourceLine>
+   <SourceLine>'</SourceLine>
+   <SourceLine>'For Each r As RowInfo In mRows</SourceLine>
+   <SourceLine>'LB.AddRow("") // drawn manually later</SourceLine>
+   <SourceLine>'Next</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LB.Refresh</SourceLine>
    <SourceLine>End Sub</SourceLine>
@@ -7340,38 +7340,26 @@
    <SourceLine>' Keep model copy</SourceLine>
    <SourceLine>Var studyNode As Dictionary</SourceLine>
    <SourceLine>If studies.HasKey(studyKey) Then</SourceLine>
-   <SourceLine>studyNode = Dictionary(studies.Value(studyKey))</SourceLine>
-   <SourceLine>Else</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>studyNode = New Dictionary</SourceLine>
-   <SourceLine>studyNode.Value("study") = study</SourceLine>
-   <SourceLine>studyNode.Value("series") = New Dictionary</SourceLine>
    <SourceLine>studies.Value(studyKey) = studyNode</SourceLine>
-   <SourceLine>End If</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>' Build JSON for TreeView</SourceLine>
    <SourceLine>Var node As New Dictionary</SourceLine>
-   <SourceLine>node.Value("type") = "study"</SourceLine>
-   <SourceLine>node.Value("id") = "S|" + studyKey</SourceLine>
-   <SourceLine>node.Value("parentId") = ""   ' ROOT</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>Var data As New Dictionary</SourceLine>
-   <SourceLine>data.Value("StudyInstanceUID") = studyKey</SourceLine>
-   <SourceLine>data.Value("PatientID") = study.PatientID.Value</SourceLine>
-   <SourceLine>data.Value("PatientName") = study.PatientName.Value</SourceLine>
-   <SourceLine>data.Value("StudyDate") = study.StudyDate.Value</SourceLine>
-   <SourceLine>data.Value("StudyTime") = study.StudyTime.Value</SourceLine>
-   <SourceLine>data.Value("StudyDescription") = study.StudyDescription.Value</SourceLine>
-   <SourceLine>data.Value("AccessionNumber") = study.AccessionNumber.Value</SourceLine>
+   <SourceLine>StudyNode.Value("StudyInstanceUID") = studyKey</SourceLine>
+   <SourceLine>StudyNode.Value("PatientID") = study.PatientID.Value</SourceLine>
+   <SourceLine>StudyNode.Value("PatientName") = study.PatientName.Value</SourceLine>
+   <SourceLine>StudyNode.Value("StudyDate") = study.StudyDate.Value</SourceLine>
+   <SourceLine>StudyNode.Value("StudyTime") = study.StudyTime.Value</SourceLine>
+   <SourceLine>StudyNode.Value("StudyDescription") = study.StudyDescription.Value</SourceLine>
+   <SourceLine>StudyNode.Value("AccessionNumber") = study.AccessionNumber.Value</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>data.Value("ModalitiesInStudy") = study.ModalitiesInStudy.Value</SourceLine>
-   <SourceLine>data.Value("NumberOfStudyRelatedSeries") = study.NumberOfStudyRelatedSeries.Value</SourceLine>
-   <SourceLine>data.Value("NumberOfStudyRelatedInstances") = study.NumberOfStudyRelatedInstances.Value</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>node.Value("data") = data</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>' THIS is the correct call</SourceLine>
-   <SourceLine>LoadFromDictionary(theTree)</SourceLine>
-   <SourceLine>//LoadFromJSON(GenerateJSON(node))</SourceLine>
+   <SourceLine>StudyNode.Value("ModalitiesInStudy") = study.ModalitiesInStudy.Value</SourceLine>
+   <SourceLine>StudyNode.Value("NumberOfStudyRelatedSeries") = study.NumberOfStudyRelatedSeries.Value</SourceLine>
+   <SourceLine>StudyNode.Value("NumberOfStudyRelatedInstances") = study.NumberOfStudyRelatedInstances.Value</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -7427,9 +7415,7 @@
    <SourceLine>node.Value("data") = data</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>' Correct call</SourceLine>
-   <SourceLine>LoadFromDictionary(theTree)</SourceLine>
-   <SourceLine>//LoadFromJSON(GenerateJSON(theTree))</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>//LoadFromDictionary(studies)</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -7676,16 +7662,43 @@
   <ItemName>16</ItemName>
   <ItemData>0</ItemData>
  </WarningPreferences>
+ <BreakPointGroup>
+  <PartID>43126783</PartID>
+  <ItemName></ItemName>
+  <UnitType>Method</UnitType>
+  <UnitID>Private Sub UpsertStudy_(study As AStudy)</UnitID>
+  <lineNum>1</lineNum>
+ </BreakPointGroup>
+ <BreakPointGroup>
+  <PartID>43126783</PartID>
+  <ItemName></ItemName>
+  <UnitType>Method</UnitType>
+  <UnitID>Private Sub UpsertStudy_(study As AStudy)</UnitID>
+  <lineNum>28</lineNum>
+ </BreakPointGroup>
+ <BreakPointGroup>
+  <PartID>43126783</PartID>
+  <ItemName></ItemName>
+  <UnitType>Method</UnitType>
+  <UnitID>Private Sub UpsertSeries_(series as ASeries)</UnitID>
+  <lineNum>1</lineNum>
+ </BreakPointGroup>
  <StudioWindowState>
-  <EditBounds><Rect left="84" top="160" width="2019" height="851"/></EditBounds>
+  <EditBounds><Rect left="120" top="142" width="2019" height="851"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
-   <EditorCount>1</EditorCount>
+   <EditorCount>2</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
+    <EditorLocation>DicomTreeViewCtrl.UpsertSeries_</EditorLocation>
+    <EditorPath></EditorPath>
+    <EditingPartID>43126783</EditingPartID>
+    <EditorPath></EditorPath>
+   </Editor>
+   <Editor>
+    <EditorIndex>1</EditorIndex>
     <EditorLocation></EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <SelectedTab>0</SelectedTab>
