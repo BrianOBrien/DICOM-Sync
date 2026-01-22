@@ -655,7 +655,7 @@
    <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
    <SourceLine>Wend</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>//LeftTree.Refresh</SourceLine>
+   <SourceLine>LeftTree.Update</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -7337,13 +7337,11 @@
    <SourceLine>Var studyKey As String = study.StudyInstanceUID.Value</SourceLine>
    <SourceLine>If studyKey = "" Then Return</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>' Keep model copy</SourceLine>
-   <SourceLine>Var studyNode As Dictionary</SourceLine>
    <SourceLine>If studies.HasKey(studyKey) Then</SourceLine>
-   <SourceLine>return</SourceLine>
+   <SourceLine>Return</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>studyNode = New Dictionary</SourceLine>
+   <SourceLine>var studyNode  as  New Dictionary</SourceLine>
    <SourceLine>studies.Value(studyKey) = studyNode</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>' Build JSON for TreeView</SourceLine>
@@ -7360,6 +7358,8 @@
    <SourceLine>StudyNode.Value("ModalitiesInStudy") = study.ModalitiesInStudy.Value</SourceLine>
    <SourceLine>StudyNode.Value("NumberOfStudyRelatedSeries") = study.NumberOfStudyRelatedSeries.Value</SourceLine>
    <SourceLine>StudyNode.Value("NumberOfStudyRelatedInstances") = study.NumberOfStudyRelatedInstances.Value</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>studyNode.Value("series") = New Dictionary</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -7378,7 +7378,7 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub UpsertSeries_(series as ASeries)</SourceLine>
-   <SourceLine>Var studies As Dictionary = Dictionary(theTree.Value("studies"))</SourceLine>
+   <SourceLine>Var studies As Dictionary = theTree.Value("studies")</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>Var studyKey As String  = series.StudyInstanceUID.Value</SourceLine>
    <SourceLine>Var seriesKey As String = series.SeriesInstanceUID.Value</SourceLine>
@@ -7388,34 +7388,24 @@
    <SourceLine>If Not studies.HasKey(studyKey) Then Return</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>Var studyNode As Dictionary = Dictionary(studies.Value(studyKey))</SourceLine>
-   <SourceLine>Var seriesDict As Dictionary = Dictionary(studyNode.Value("series"))</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>If Not seriesDict.HasKey(seriesKey) Then</SourceLine>
-   <SourceLine>seriesDict.Value(seriesKey) = series</SourceLine>
-   <SourceLine>End If</SourceLine>
-   <SourceLine></SourceLine>
+   <SourceLine>var seriesList as Dictionary = studyNode.Value("series")</SourceLine>
+   <SourceLine>&#32;</SourceLine>
    <SourceLine>' Build JSON for TreeView</SourceLine>
-   <SourceLine>Var node As New Dictionary</SourceLine>
-   <SourceLine>node.Value("type") = "series"</SourceLine>
-   <SourceLine>node.Value("id") = "R|" + seriesKey</SourceLine>
-   <SourceLine>node.Value("parentId") = "S|" + studyKey</SourceLine>
+   <SourceLine>Var aseries As New Dictionary</SourceLine>
+   <SourceLine>aseries.Value("StudyInstanceUID") = studyKey</SourceLine>
+   <SourceLine>aseries.Value("SeriesInstanceUID") = seriesKey</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>Var data As New Dictionary</SourceLine>
-   <SourceLine>data.Value("StudyInstanceUID") = studyKey</SourceLine>
-   <SourceLine>data.Value("SeriesInstanceUID") = seriesKey</SourceLine>
+   <SourceLine>aseries.Value("Modality") = series.Modality.Value</SourceLine>
+   <SourceLine>aseries.Value("NumberOfImages") = series.NumberOfImages.Value</SourceLine>
+   <SourceLine>aseries.Value("SeriesDate") = series.SeriesDate.Value</SourceLine>
+   <SourceLine>aseries.Value("SeriesDescription") = series.SeriesDescription.Value</SourceLine>
+   <SourceLine>aseries.Value("SeriesNumber") = series.SeriesNumber.Value</SourceLine>
+   <SourceLine>aseries.Value("SeriesTime") = series.SeriesTime.Value</SourceLine>
+   <SourceLine>aseries.Value("SOPClassUID") = series.SOPClassUID.Value</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>data.Value("Modality") = series.Modality.Value</SourceLine>
-   <SourceLine>data.Value("NumberOfImages") = series.NumberOfImages.Value</SourceLine>
-   <SourceLine>data.Value("SeriesDate") = series.SeriesDate.Value</SourceLine>
-   <SourceLine>data.Value("SeriesDescription") = series.SeriesDescription.Value</SourceLine>
-   <SourceLine>data.Value("SeriesNumber") = series.SeriesNumber.Value</SourceLine>
-   <SourceLine>data.Value("SeriesTime") = series.SeriesTime.Value</SourceLine>
-   <SourceLine>data.Value("SOPClassUID") = series.SOPClassUID.Value</SourceLine>
+   <SourceLine>seriesList.Value(seriesKey) = aseries</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>node.Value("data") = data</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>' Correct call</SourceLine>
-   <SourceLine>//LoadFromDictionary(studies)</SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -7442,6 +7432,25 @@
   <IsShared>0</IsShared>
   <ItemParams>s As String</ItemParams>
   <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Update</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1316362239</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Update()</SourceLine>
+   <SourceLine>LoadFromDictionary(theTree)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
  </Method>
  <Property>
   <ItemName>theTree</ItemName>
@@ -7662,43 +7671,16 @@
   <ItemName>16</ItemName>
   <ItemData>0</ItemData>
  </WarningPreferences>
- <BreakPointGroup>
-  <PartID>43126783</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Private Sub UpsertStudy_(study As AStudy)</UnitID>
-  <lineNum>1</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>43126783</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Private Sub UpsertStudy_(study As AStudy)</UnitID>
-  <lineNum>28</lineNum>
- </BreakPointGroup>
- <BreakPointGroup>
-  <PartID>43126783</PartID>
-  <ItemName></ItemName>
-  <UnitType>Method</UnitType>
-  <UnitID>Private Sub UpsertSeries_(series as ASeries)</UnitID>
-  <lineNum>1</lineNum>
- </BreakPointGroup>
  <StudioWindowState>
-  <EditBounds><Rect left="120" top="142" width="2019" height="851"/></EditBounds>
+  <EditBounds><Rect left="320" top="149" width="2019" height="851"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
-   <EditorCount>2</EditorCount>
+   <EditorCount>1</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>DicomTreeViewCtrl.UpsertSeries_</EditorLocation>
+    <EditorLocation>MainWindow.TimerEvent</EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>43126783</EditingPartID>
-    <EditorPath></EditorPath>
-   </Editor>
-   <Editor>
-    <EditorIndex>1</EditorIndex>
-    <EditorLocation></EditorLocation>
-    <EditorPath></EditorPath>
+    <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <SelectedTab>0</SelectedTab>
