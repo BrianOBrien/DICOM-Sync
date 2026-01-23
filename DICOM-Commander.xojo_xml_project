@@ -309,7 +309,7 @@
    <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-5040", "", ""))</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LayoutUI</SourceLine>
-   <SourceLine>RightTree.LoadFromJSON(SamplePatientStudyJSON)</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -637,9 +637,7 @@
    <SourceLine>next</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>if nothingRunning then</SourceLine>
-   <SourceLine>if StudyRequests.Ubound = -1 then</SourceLine>
-   <SourceLine>System.DebugLog("Left Idle")</SourceLine>
-   <SourceLine>end if</SourceLine>
+   <SourceLine>System.DebugLog(".")</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine></SourceLine>
@@ -655,7 +653,6 @@
    <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
    <SourceLine>Wend</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>LeftTree.Update</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -1137,8 +1134,10 @@
     <SourceLine>dim sr as StudyRequest</SourceLine>
     <SourceLine>dim MyQuery as AQuery</SourceLine>
     <SourceLine></SourceLine>
-    <SourceLine>for each sr in StudyRequests</SourceLine>
+    <SourceLine>While StudyRequests.Count &gt; 0</SourceLine>
+    <SourceLine>sr = StudyRequests(0)</SourceLine>
     <SourceLine></SourceLine>
+    <SourceLine>// process sr</SourceLine>
     <SourceLine>MyQuery = new AQuery</SourceLine>
     <SourceLine>MyQuery.Mode = 1</SourceLine>
     <SourceLine>MyQuery.MyAET = "PACSYNC"</SourceLine>
@@ -1149,7 +1148,23 @@
     <SourceLine></SourceLine>
     <SourceLine>leftQueryPool.Append(MyQuery)</SourceLine>
     <SourceLine></SourceLine>
-    <SourceLine>next</SourceLine>
+    <SourceLine>// remove from front</SourceLine>
+    <SourceLine>StudyRequests.RemoveAt(0)</SourceLine>
+    <SourceLine>Wend</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>'for each sr in StudyRequests</SourceLine>
+    <SourceLine>'</SourceLine>
+    <SourceLine>'MyQuery = new AQuery</SourceLine>
+    <SourceLine>'MyQuery.Mode = 1</SourceLine>
+    <SourceLine>'MyQuery.MyAET = "PACSYNC"</SourceLine>
+    <SourceLine>'MyQuery.QueryAET = "MicMac"</SourceLine>
+    <SourceLine>'MyQuery.Host="MicMac.local"</SourceLine>
+    <SourceLine>'MyQuery.Port = 11112</SourceLine>
+    <SourceLine>'MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
+    <SourceLine>'</SourceLine>
+    <SourceLine>'leftQueryPool.Append(MyQuery)</SourceLine>
+    <SourceLine>'</SourceLine>
+    <SourceLine>'next</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>if QueryPoolTimer.Enabled = false then QueryPoolTimer.Enabled = true</SourceLine>
     <SourceLine></SourceLine>
@@ -1167,6 +1182,8 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub PauseEvent()</SourceLine>
+    <SourceLine>RightTree.LoadFromJSON(SamplePatientStudyJSON)</SourceLine>
+    <SourceLine>LeftTree.LoadFromDictionary(LeftTree.theTree, "Root")</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -6612,7 +6629,10 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub LoadFromDictionary(d As Dictionary, rootName As String = "root")</SourceLine>
+   <SourceLine>if d.KeyCount &gt; 0 then</SourceLine>
    <SourceLine>Load(TreeNodeFactory.FromDictionary(d, rootName))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
@@ -6662,9 +6682,9 @@
    <SourceLine></SourceLine>
    <SourceLine>Flatten(mRoot, 0)</SourceLine>
    <SourceLine>'</SourceLine>
-   <SourceLine>'For Each r As RowInfo In mRows</SourceLine>
-   <SourceLine>'LB.AddRow("") // drawn manually later</SourceLine>
-   <SourceLine>'Next</SourceLine>
+   <SourceLine>For Each r As RowInfo In mRows</SourceLine>
+   <SourceLine>LB.AddRow("") // drawn manually later</SourceLine>
+   <SourceLine>Next</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LB.Refresh</SourceLine>
    <SourceLine>End Sub</SourceLine>
@@ -7313,7 +7333,6 @@
    <SourceLine>Super.Constructor</SourceLine>
    <SourceLine>theTree = New Dictionary</SourceLine>
    <SourceLine>theTree.Value("studies") = New Dictionary</SourceLine>
-   <SourceLine>theTree.Value("studyIndex") = New Dictionary</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -7332,7 +7351,7 @@
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
    <SourceLine>Sub UpsertStudy_(study As AStudy)</SourceLine>
-   <SourceLine>Var studies As Dictionary = Dictionary(theTree.Value("studies"))</SourceLine>
+   <SourceLine>Var studies As Dictionary = theTree.Value("studies")</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>Var studyKey As String = study.StudyInstanceUID.Value</SourceLine>
    <SourceLine>If studyKey = "" Then Return</SourceLine>
@@ -7387,14 +7406,13 @@
    <SourceLine>' Must already have study</SourceLine>
    <SourceLine>If Not studies.HasKey(studyKey) Then Return</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>Var studyNode As Dictionary = Dictionary(studies.Value(studyKey))</SourceLine>
+   <SourceLine>Var studyNode As Dictionary = studies.Value(studyKey)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>var seriesList as Dictionary = studyNode.Value("series")</SourceLine>
    <SourceLine>&#32;</SourceLine>
-   <SourceLine>' Build JSON for TreeView</SourceLine>
    <SourceLine>Var aseries As New Dictionary</SourceLine>
-   <SourceLine>aseries.Value("StudyInstanceUID") = studyKey</SourceLine>
-   <SourceLine>aseries.Value("SeriesInstanceUID") = seriesKey</SourceLine>
+   <SourceLine>aseries.Value("StudyInstanceUID") = studyKey  //Parent</SourceLine>
+   <SourceLine>aseries.Value("SeriesInstanceUID") = seriesKey  //Self</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>aseries.Value("Modality") = series.Modality.Value</SourceLine>
    <SourceLine>aseries.Value("NumberOfImages") = series.NumberOfImages.Value</SourceLine>
@@ -7464,7 +7482,7 @@
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
   <ItemDeclaration>theTree As Dictionary</ItemDeclaration>
-  <ItemFlags>33</ItemFlags>
+  <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
  <ViewBehavior>
@@ -7672,13 +7690,13 @@
   <ItemData>0</ItemData>
  </WarningPreferences>
  <StudioWindowState>
-  <EditBounds><Rect left="320" top="149" width="2019" height="851"/></EditBounds>
+  <EditBounds><Rect left="291" top="230" width="2019" height="851"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
    <EditorCount>1</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>MainWindow.TimerEvent</EditorLocation>
+    <EditorLocation>MainWindow.Controls.SyncToolbar1.PauseEvent</EditorLocation>
     <EditorPath></EditorPath>
     <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
