@@ -637,6 +637,7 @@
    <SourceLine>next</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>if nothingRunning then</SourceLine>
+   <SourceLine>LeftTree.LoadFromDictionary(LeftTree.theTree, MainWindow.LeftAEEndpointView.AETTextBox.Text)</SourceLine>
    <SourceLine>System.DebugLog(".")</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
@@ -653,6 +654,7 @@
    <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
    <SourceLine>Wend</SourceLine>
    <SourceLine></SourceLine>
+   <SourceLine>//LeftTree.LoadFromDictionary(LeftTree.theTree, MainWindow.LeftAEEndpointView.AETTextBox.Text)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -6703,7 +6705,7 @@
   <PartID>647665663</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Sub Flatten(n As TreeNode, depth As Integer)</SourceLine>
+   <SourceLine>Sub Flatten(n as TreeNode, depth as Integer, expa as boolean = true)</SourceLine>
    <SourceLine>Var r As New RowInfo</SourceLine>
    <SourceLine>r.Node = n</SourceLine>
    <SourceLine>r.Depth = depth</SourceLine>
@@ -6713,8 +6715,8 @@
    <SourceLine>If mExpanded.HasKey(n.Path) Then</SourceLine>
    <SourceLine>r.Expanded = mExpanded.Value(n.Path).BooleanValue</SourceLine>
    <SourceLine>Else</SourceLine>
-   <SourceLine>r.Expanded = False</SourceLine>
-   <SourceLine>mExpanded.Value(n.Path) = False</SourceLine>
+   <SourceLine>r.Expanded = expa</SourceLine>
+   <SourceLine>mExpanded.Value(n.Path) = expa</SourceLine>
    <SourceLine>End If</SourceLine>
    <SourceLine>End If</SourceLine>
    <SourceLine></SourceLine>
@@ -6731,7 +6733,7 @@
   <AliasName></AliasName>
   <ItemFlags>33</ItemFlags>
   <IsShared>0</IsShared>
-  <ItemParams>n As TreeNode, depth As Integer</ItemParams>
+  <ItemParams>n as TreeNode, depth as Integer, expa as boolean = true</ItemParams>
   <ItemResult></ItemResult>
  </Method>
  <Method>
@@ -7672,6 +7674,8 @@
   </ViewProperty>
  </ViewBehavior>
 </block>
+<block type="ProjectItem" ID="955981823">
+</block>
 <block type="UIState" ID="0">
  <WarningPreferences>
   <ItemName>5</ItemName>
@@ -7690,18 +7694,25 @@
   <ItemData>0</ItemData>
  </WarningPreferences>
  <StudioWindowState>
-  <EditBounds><Rect left="291" top="230" width="2019" height="851"/></EditBounds>
+  <EditBounds><Rect left="162" top="152" width="2019" height="851"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
-   <EditorCount>1</EditorCount>
+   <EditorCount>2</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>MainWindow.Controls.SyncToolbar1.PauseEvent</EditorLocation>
+    <EditorLocation>MainWindow.TimerEvent</EditorLocation>
     <EditorPath></EditorPath>
     <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
-   <SelectedTab>0</SelectedTab>
+   <Editor>
+    <EditorIndex>1</EditorIndex>
+    <EditorLocation>dcommander</EditorLocation>
+    <EditorPath></EditorPath>
+    <EditingPartID>955981823</EditingPartID>
+    <EditorPath></EditorPath>
+   </Editor>
+   <SelectedTab>1</SelectedTab>
   </Editors>
  </StudioWindowState>
 </block>
