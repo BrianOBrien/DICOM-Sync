@@ -297,16 +297,16 @@
    <SourceLine>SelfAEEndpointView.Port = "104"</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>var RootQ as New AQuery()</SourceLine>
-   <SourceLine></SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "", "", "3TRES-MB-4213", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4215", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4216", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4225", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4226", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4242", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4251", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-4252", "", ""))</SourceLine>
-   <SourceLine>StudyRequests.Append(new StudyRequest("", "",  "", "3TRES-MB-5040", "", ""))</SourceLine>
+   <SourceLine>RequestQueue.Append(new StudyRequest("", "", "", "*", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "", "", "3TRES-MB-4213", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-4215", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-4216", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-4225", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-4226", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-4242", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-4251", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-4252", "", ""))</SourceLine>
+   <SourceLine>//RequestQueue.Append(new StudyRequest("", "",  "", "3TRES-MB-5040", "", ""))</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LayoutUI</SourceLine>
    <SourceLine></SourceLine>
@@ -637,7 +637,7 @@
    <SourceLine>next</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>if nothingRunning then</SourceLine>
-   <SourceLine>LeftTree.LoadFromDictionary(LeftTree.theTree, MainWindow.LeftAEEndpointView.AETTextBox.Text)</SourceLine>
+   <SourceLine>//LeftTree.LoadFromDictionary(LeftTree.theTree, MainWindow.LeftAEEndpointView.AETTextBox.Text)</SourceLine>
    <SourceLine>System.DebugLog(".")</SourceLine>
    <SourceLine>end if</SourceLine>
    <SourceLine></SourceLine>
@@ -654,7 +654,7 @@
    <SourceLine>leftSeries.RemoveAt(0)</SourceLine>
    <SourceLine>Wend</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>//LeftTree.LoadFromDictionary(LeftTree.theTree, MainWindow.LeftAEEndpointView.AETTextBox.Text)</SourceLine>
+   <SourceLine>LeftTree.LoadFromDictionary(LeftTree.theTree, MainWindow.LeftAEEndpointView.AETTextBox.Text)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -666,17 +666,17 @@
   <ItemResult></ItemResult>
  </Method>
  <Property>
-  <ItemName>StudyRequests(-1)</ItemName>
+  <ItemName>RequestQueue(-1)</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>449718271</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>StudyRequests(-1) As StudyRequest</SourceLine>
+   <SourceLine>RequestQueue(-1) As StudyRequest</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>StudyRequests(-1) As StudyRequest</ItemDeclaration>
+  <ItemDeclaration>RequestQueue(-1) As StudyRequest</ItemDeclaration>
   <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
@@ -1047,6 +1047,45 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub Query(aet as string, host as string, port as string)</SourceLine>
+    <SourceLine>dim sr as StudyRequest</SourceLine>
+    <SourceLine>dim MyQuery as AQuery</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>While RequestQueue.Count &gt; 0</SourceLine>
+    <SourceLine>sr = RequestQueue(0)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// process sr</SourceLine>
+    <SourceLine>MyQuery = new AQuery</SourceLine>
+    <SourceLine>MyQuery.Mode = 1</SourceLine>
+    <SourceLine>MyQuery.MyAET = SelfAEEndpointView.AET //"PACSYNC"</SourceLine>
+    <SourceLine>MyQuery.QueryAET =  aet</SourceLine>
+    <SourceLine>MyQuery.Host=host</SourceLine>
+    <SourceLine>MyQuery.Port = port.ToInteger //11112</SourceLine>
+    <SourceLine>MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>leftQueryPool.Append(MyQuery)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// remove from front</SourceLine>
+    <SourceLine>RequestQueue.RemoveAt(0)</SourceLine>
+    <SourceLine>Wend</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>'for each sr in RequestQueue</SourceLine>
+    <SourceLine>'</SourceLine>
+    <SourceLine>'MyQuery = new AQuery</SourceLine>
+    <SourceLine>'MyQuery.Mode = 1</SourceLine>
+    <SourceLine>'MyQuery.MyAET = "PACSYNC"</SourceLine>
+    <SourceLine>'MyQuery.QueryAET = "MicMac"</SourceLine>
+    <SourceLine>'MyQuery.Host="MicMac.local"</SourceLine>
+    <SourceLine>'MyQuery.Port = 11112</SourceLine>
+    <SourceLine>'MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
+    <SourceLine>'</SourceLine>
+    <SourceLine>'leftQueryPool.Append(MyQuery)</SourceLine>
+    <SourceLine>'</SourceLine>
+    <SourceLine>'next</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>if QueryPoolTimer.Enabled = false then QueryPoolTimer.Enabled = true</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>'ShellTest.Mode = 1</SourceLine>
+    <SourceLine>'ShellTest.Execute("echo HELLO WORLD")</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -1075,6 +1114,28 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub Query(aet as string, host as string, port as string)</SourceLine>
+    <SourceLine>dim sr as StudyRequest</SourceLine>
+    <SourceLine>dim MyQuery as AQuery</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>While RequestQueue.Count &gt; 0</SourceLine>
+    <SourceLine>sr = RequestQueue(0)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// process sr</SourceLine>
+    <SourceLine>MyQuery = new AQuery</SourceLine>
+    <SourceLine>MyQuery.Mode = 1</SourceLine>
+    <SourceLine>MyQuery.MyAET = SelfAEEndpointView.AET //"PACSYNC"</SourceLine>
+    <SourceLine>MyQuery.QueryAET =  aet</SourceLine>
+    <SourceLine>MyQuery.Host=host</SourceLine>
+    <SourceLine>MyQuery.Port = port.ToInteger //11112</SourceLine>
+    <SourceLine>MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>leftQueryPool.Append(MyQuery)</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// remove from front</SourceLine>
+    <SourceLine>RequestQueue.RemoveAt(0)</SourceLine>
+    <SourceLine>Wend</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>if QueryPoolTimer.Enabled = false then QueryPoolTimer.Enabled = true</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -1133,45 +1194,6 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub StartEvent()</SourceLine>
-    <SourceLine>dim sr as StudyRequest</SourceLine>
-    <SourceLine>dim MyQuery as AQuery</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>While StudyRequests.Count &gt; 0</SourceLine>
-    <SourceLine>sr = StudyRequests(0)</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>// process sr</SourceLine>
-    <SourceLine>MyQuery = new AQuery</SourceLine>
-    <SourceLine>MyQuery.Mode = 1</SourceLine>
-    <SourceLine>MyQuery.MyAET = "PACSYNC"</SourceLine>
-    <SourceLine>MyQuery.QueryAET = "MicMac"</SourceLine>
-    <SourceLine>MyQuery.Host="MicMac.local"</SourceLine>
-    <SourceLine>MyQuery.Port = 11112</SourceLine>
-    <SourceLine>MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>leftQueryPool.Append(MyQuery)</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>// remove from front</SourceLine>
-    <SourceLine>StudyRequests.RemoveAt(0)</SourceLine>
-    <SourceLine>Wend</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>'for each sr in StudyRequests</SourceLine>
-    <SourceLine>'</SourceLine>
-    <SourceLine>'MyQuery = new AQuery</SourceLine>
-    <SourceLine>'MyQuery.Mode = 1</SourceLine>
-    <SourceLine>'MyQuery.MyAET = "PACSYNC"</SourceLine>
-    <SourceLine>'MyQuery.QueryAET = "MicMac"</SourceLine>
-    <SourceLine>'MyQuery.Host="MicMac.local"</SourceLine>
-    <SourceLine>'MyQuery.Port = 11112</SourceLine>
-    <SourceLine>'MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
-    <SourceLine>'</SourceLine>
-    <SourceLine>'leftQueryPool.Append(MyQuery)</SourceLine>
-    <SourceLine>'</SourceLine>
-    <SourceLine>'next</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>if QueryPoolTimer.Enabled = false then QueryPoolTimer.Enabled = true</SourceLine>
-    <SourceLine></SourceLine>
-    <SourceLine>'ShellTest.Mode = 1</SourceLine>
-    <SourceLine>'ShellTest.Execute("echo HELLO WORLD")</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -1184,8 +1206,8 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub PauseEvent()</SourceLine>
-    <SourceLine>RightTree.LoadFromJSON(SamplePatientStudyJSON)</SourceLine>
-    <SourceLine>LeftTree.LoadFromDictionary(LeftTree.theTree, "Root")</SourceLine>
+    <SourceLine>'RightTree.LoadFromJSON(SamplePatientStudyJSON)</SourceLine>
+    <SourceLine>'LeftTree.LoadFromDictionary(LeftTree.theTree, "Root")</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -5387,6 +5409,18 @@
  </ControlBehavior>
  <ControlBehavior>
   <Superclass>DesktopBevelButton</Superclass>
+  <HookInstance>
+   <ItemName>Pressed</ItemName>
+   <Compatibility></Compatibility>
+   <Visible>1</Visible>
+   <PartID>1391175679</PartID>
+   <ItemSource>
+    <TextEncoding>134217984</TextEncoding>
+    <SourceLine>Sub Pressed()</SourceLine>
+    <SourceLine>RaiseEvent Query( AET, Host, Port)</SourceLine>
+    <SourceLine>End Sub</SourceLine>
+   </ItemSource>
+  </HookInstance>
  </ControlBehavior>
  <Control>
   <ControlClass>DesktopLabel</ControlClass>
@@ -7674,8 +7708,6 @@
   </ViewProperty>
  </ViewBehavior>
 </block>
-<block type="ProjectItem" ID="955981823">
-</block>
 <block type="UIState" ID="0">
  <WarningPreferences>
   <ItemName>5</ItemName>
@@ -7694,22 +7726,22 @@
   <ItemData>0</ItemData>
  </WarningPreferences>
  <StudioWindowState>
-  <EditBounds><Rect left="162" top="152" width="2019" height="851"/></EditBounds>
+  <EditBounds><Rect left="208" top="130" width="2019" height="851"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
    <EditorCount>2</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>MainWindow.TimerEvent</EditorLocation>
+    <EditorLocation>MainWindow</EditorLocation>
     <EditorPath></EditorPath>
     <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <Editor>
     <EditorIndex>1</EditorIndex>
-    <EditorLocation>dcommander</EditorLocation>
+    <EditorLocation>MainWindow</EditorLocation>
     <EditorPath></EditorPath>
-    <EditingPartID>955981823</EditingPartID>
+    <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <SelectedTab>1</SelectedTab>
