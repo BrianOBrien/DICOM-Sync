@@ -1,35 +1,11 @@
-# Build output
-Builds/
-bin/
-obj/
+# Xojo (formerly REALbasic and Real Studio)
 
-# Avalonia compile artifacts
-*.axaml.cs~
-
-# User-specific files
-*.user
-*.userosscache
-*.suo
-*.userprefs
-*.swp
-*.temp
-
-# IDE-specific
-.vscode/
-.idea/
-*.code-workspace
-
-# OS crap
-.DS_Store
-Thumbs.db
-ehthumbs.db
-
-# Logs
-*.log
-
-# Rider
-.idea/
-*.sln.iml
-
-# Dotnet tools
-/.vs/
+Builds*
+*.debug
+*.debug.app
+Debug*.exe
+Debug*/Debug*.exe
+Debug*/Debug*\ Libs
+*.rbuistate
+*.xojo_uistate
+*.obsolete*
