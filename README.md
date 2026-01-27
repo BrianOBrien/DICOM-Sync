@@ -12,7 +12,7 @@ DICOM Commander does **not** retrieve or store images locally.
 The screenshot below shows **DICOM Commander** performing an **asynchronous C-FIND** against two independent PACS endpoints.  
 Results are displayed **side-by-side** without UI blocking, validating the core async query architecture.
 
-![Asynchronous dual-PACS query](docs/images/DicomCommander.png)
+![Asynchronous dual-PACS query](docs/images/DicomCommander.jpg)
 
 ---
 
