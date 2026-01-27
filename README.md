@@ -1,4 +1,7 @@
 # DICOM Commander
+## Asynchronous Dual-PACS Query
+
+![Asynchronous query from two PACS](docs/images/dicom_commander_async_query.png)
 
 **DICOM Commander** is a DICOM networking utility designed to **synchronize imaging studies between DICOM servers**.
 
