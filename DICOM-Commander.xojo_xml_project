@@ -288,9 +288,9 @@
    <SourceLine>LeftAEEndpointView.Host = "MicMac.local"</SourceLine>
    <SourceLine>LeftAEEndpointView.Port = "11112"</SourceLine>
    <SourceLine></SourceLine>
-   <SourceLine>RightAEEndpointView.AET = "MicroDicom"</SourceLine>
-   <SourceLine>RightAEEndpointView.Host = "DESKTOP-6JJ1H7E.local"</SourceLine>
-   <SourceLine>RightAEEndpointView.Port = "11112"</SourceLine>
+   <SourceLine>RightAEEndpointView.AET = "MEDCON"</SourceLine>
+   <SourceLine>RightAEEndpointView.Host = "dicomserver.co.uk"</SourceLine>
+   <SourceLine>RightAEEndpointView.Port = "104"</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>SelfAEEndpointView.AET = "PACSync"</SourceLine>
    <SourceLine>SelfAEEndpointView.Host = "piFiveAlive"</SourceLine>
@@ -604,13 +604,13 @@
   <ItemResult></ItemResult>
  </Method>
  <Method>
-  <ItemName>TimerEvent</ItemName>
+  <ItemName>LeftTimerEvent</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>107558911</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>Sub TimerEvent()</SourceLine>
+   <SourceLine>Sub LeftTimerEvent()</SourceLine>
    <SourceLine>dim count as integer = 0</SourceLine>
    <SourceLine>dim i as integer</SourceLine>
    <SourceLine>dim nothingRunning as Boolean = true</SourceLine>
@@ -655,6 +655,192 @@
    <SourceLine>Wend</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>LeftTree.LoadFromDictionary(LeftTree.theTree, MainWindow.LeftAEEndpointView.AETTextBox.Text)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>RightStudyReceived</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>587311103</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub RightStudyReceived(study as AStudy)</SourceLine>
+   <SourceLine>System.DebugLog("Right Study :" + study.StudyInstanceUID.Value)</SourceLine>
+   <SourceLine>RightStudies.Add(study)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>study as AStudy</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>RIghtQueryCompleted</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>2011041791</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub RIghtQueryCompleted(q as AQuery)</SourceLine>
+   <SourceLine>dim dics(-1) as Dictionary</SourceLine>
+   <SourceLine>dim d as Dictionary</SourceLine>
+   <SourceLine>dim subQuery as AQuery</SourceLine>
+   <SourceLine>dim studyReq as StudyRequest</SourceLine>
+   <SourceLine>dim study as AStudy</SourceLine>
+   <SourceLine>dim series as ASeries</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>System.DebugLog("Right Query Completed")</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>q.IsFinished = true</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dics = q.ParseResults()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>select case q.mLevel</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>case enumLEVELS.PATIENT</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>case enumLEVELS.STUDY</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// Lets queue up the requests for each series in the study</SourceLine>
+   <SourceLine>studyReq = StudyRequest(q.mRootNode)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>for each d in dics</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>study = new AStudy</SourceLine>
+   <SourceLine>study.FromDictionary(d)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>RightStudyReceived(study)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>studyReq.Children.Append(study)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>subQuery = new AQuery</SourceLine>
+   <SourceLine>subQuery.Mode     = q.Mode</SourceLine>
+   <SourceLine>subQuery.MyAET    = q.MyAET</SourceLine>
+   <SourceLine>subQuery.QueryAET = q.QueryAET</SourceLine>
+   <SourceLine>subQuery.Host     = q.Host</SourceLine>
+   <SourceLine>subQuery.Port     = q.Port</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>subQuery.Query(q.mRoot, enumLEVELS.SERIES, study.QueryFindKeyValues, ASeries.QueryGetKeys, study)</SourceLine>
+   <SourceLine>RightQueryPool.Append(subQuery)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>case enumLEVELS.SERIES</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//study = AStudy(q.mRootNode)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>for each d in dics</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>series = new ASeries</SourceLine>
+   <SourceLine>series.FromDictionary(d)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>RightSeriesReceived(series)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>//study.Children.Append(series)</SourceLine>
+   <SourceLine>//SeriesReceived(series)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>// No sub query at the moment.</SourceLine>
+   <SourceLine>next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>case enumLEVELS.IMAGE</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>end select</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>q as AQuery</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>RightSeriesReceived</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>7755775</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub RightSeriesReceived(series as ASeries)</SourceLine>
+   <SourceLine>System.DebugLog("      RIght Study :" + series.StudyInstanceUID.Value + " Series :" + series.SeriesInstanceUID.Value)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>RightSeries.Add(series)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>series as ASeries</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>RightTimerEvent</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <PartID>1966190591</PartID>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub RightTimerEvent()</SourceLine>
+   <SourceLine>dim count as integer = 0</SourceLine>
+   <SourceLine>dim i as integer</SourceLine>
+   <SourceLine>dim nothingRunning as Boolean = true</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>for i=rightQueryPool.Ubound DownTo 0</SourceLine>
+   <SourceLine>if rightQueryPool(i).IsRunning then </SourceLine>
+   <SourceLine>count = count + 1</SourceLine>
+   <SourceLine>nothingRunning = false</SourceLine>
+   <SourceLine>elseif rightQueryPool(i).IsFinished then</SourceLine>
+   <SourceLine>rightQueryPool.Remove(i)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>for i=0 to rightQueryPool.Ubound</SourceLine>
+   <SourceLine>if count &lt; 4 then</SourceLine>
+   <SourceLine>if (not rightQueryPool(i).IsRunning) and not (rightQueryPool(i).IsFinished) then</SourceLine>
+   <SourceLine>AddHandler rightQueryPool(i).Completed, WeakAddressOf rightQueryCompleted</SourceLine>
+   <SourceLine>System.DebugLog("execute: " + rightQueryPool(i).cmd)</SourceLine>
+   <SourceLine>rightQueryPool(i).Execute(rightQueryPool(i).cmd)</SourceLine>
+   <SourceLine>count = count + 1</SourceLine>
+   <SourceLine>nothingRunning = false</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>if nothingRunning then</SourceLine>
+   <SourceLine>//rightTree.LoadFromDictionary(rightTree.theTree, MainWindow.rightAEEndpointView.AETTextBox.Text)</SourceLine>
+   <SourceLine>System.DebugLog(".")</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>While rightStudies.Count &gt; 0</SourceLine>
+   <SourceLine>Var s As AStudy = rightStudies(0)</SourceLine>
+   <SourceLine>rightTree.AddStudy(s)</SourceLine>
+   <SourceLine>rightStudies.RemoveAt(0)</SourceLine>
+   <SourceLine>Wend</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>While rightSeries.Count &gt; 0</SourceLine>
+   <SourceLine>Var s As ASeries = rightSeries(0)</SourceLine>
+   <SourceLine>rightTree.AddSeries(s)</SourceLine>
+   <SourceLine>rightSeries.RemoveAt(0)</SourceLine>
+   <SourceLine>Wend</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>rightTree.LoadFromDictionary(rightTree.theTree, MainWindow.rightAEEndpointView.AETTextBox.Text)</SourceLine>
    <SourceLine></SourceLine>
    <SourceLine>End Sub</SourceLine>
   </ItemSource>
@@ -711,17 +897,17 @@
   <IsShared>0</IsShared>
  </Property>
  <Property>
-  <ItemName>RightStudies()</ItemName>
+  <ItemName>RightStudies(-1)</ItemName>
   <Compatibility></Compatibility>
   <Visible>1</Visible>
   <PartID>251269119</PartID>
   <ItemSource>
    <TextEncoding>134217984</TextEncoding>
-   <SourceLine>RightStudies() As AStudy</SourceLine>
+   <SourceLine>RightStudies(-1) As AStudy</SourceLine>
    <SourceLine></SourceLine>
   </ItemSource>
   <TextEncoding>134217984</TextEncoding>
-  <ItemDeclaration>RightStudies() As AStudy</ItemDeclaration>
+  <ItemDeclaration>RightStudies(-1) As AStudy</ItemDeclaration>
   <ItemFlags>0</ItemFlags>
   <IsShared>0</IsShared>
  </Property>
@@ -1117,6 +1303,8 @@
     <SourceLine>dim sr as StudyRequest</SourceLine>
     <SourceLine>dim MyQuery as AQuery</SourceLine>
     <SourceLine></SourceLine>
+    <SourceLine>RequestQueue.Append(new StudyRequest("", "", "", "*", "", ""))</SourceLine>
+    <SourceLine></SourceLine>
     <SourceLine>While RequestQueue.Count &gt; 0</SourceLine>
     <SourceLine>sr = RequestQueue(0)</SourceLine>
     <SourceLine></SourceLine>
@@ -1129,13 +1317,14 @@
     <SourceLine>MyQuery.Port = port.ToInteger //11112</SourceLine>
     <SourceLine>MyQuery.Query(enumROOTS.STUDY, enumLEVELS.STUDY, sr.AsDictionary, AStudy.QueryGetKeys, sr)</SourceLine>
     <SourceLine></SourceLine>
-    <SourceLine>leftQueryPool.Append(MyQuery)</SourceLine>
+    <SourceLine>RightQueryPool.Append(MyQuery)</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>// remove from front</SourceLine>
     <SourceLine>RequestQueue.RemoveAt(0)</SourceLine>
     <SourceLine>Wend</SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>if QueryPoolTimer.Enabled = false then QueryPoolTimer.Enabled = true</SourceLine>
+    <SourceLine></SourceLine>
     <SourceLine></SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
@@ -1154,8 +1343,15 @@
    <ItemSource>
     <TextEncoding>134217984</TextEncoding>
     <SourceLine>Sub Action()</SourceLine>
-    <SourceLine>TimerEvent</SourceLine>
+    <SourceLine>Static parity As UInt64 = 0</SourceLine>
     <SourceLine></SourceLine>
+    <SourceLine>If (parity And 1) = 1 Then</SourceLine>
+    <SourceLine>LeftTimerEvent</SourceLine>
+    <SourceLine>Else</SourceLine>
+    <SourceLine>RightTimerEvent</SourceLine>
+    <SourceLine>End If</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>parity = parity + 1</SourceLine>
     <SourceLine>End Sub</SourceLine>
    </ItemSource>
   </HookInstance>
@@ -7726,20 +7922,20 @@
   <ItemData>0</ItemData>
  </WarningPreferences>
  <StudioWindowState>
-  <EditBounds><Rect left="208" top="130" width="2019" height="851"/></EditBounds>
+  <EditBounds><Rect left="767" top="156" width="1464" height="842"/></EditBounds>
   <WindowMaximized>0</WindowMaximized>
   <Editors>
    <EditorCount>2</EditorCount>
    <Editor>
     <EditorIndex>0</EditorIndex>
-    <EditorLocation>MainWindow</EditorLocation>
+    <EditorLocation>MainWindow.Controls.RightAEEndpointView.Query</EditorLocation>
     <EditorPath></EditorPath>
     <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
    </Editor>
    <Editor>
     <EditorIndex>1</EditorIndex>
-    <EditorLocation>MainWindow</EditorLocation>
+    <EditorLocation>MainWindow.Opening</EditorLocation>
     <EditorPath></EditorPath>
     <EditingPartID>2019475455</EditingPartID>
     <EditorPath></EditorPath>
